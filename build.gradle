@@ -3,9 +3,6 @@ plugins {
     id 'org.springframework.boot' version '2.7.2'
     id 'io.spring.dependency-management' version '1.0.12.RELEASE'
 }
-ext {
-    springCloudVersion = '2021.0.3'
-}
 
 subprojects {
     apply plugin: 'java'
@@ -27,74 +24,11 @@ subprojects {
     }
 
     dependencies {
-        compileOnly 'org.projectlombok:lombok'
+        implementation 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
-        developmentOnly 'org.springframework.boot:spring-boot-devtools'
-        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
     }
+
     tasks.named('test') {
         useJUnitPlatform()
-    }
-}
-
-project(':system-core') {
-    bootJar {
-        enabled = false
-    }
-
-    jar {
-        enabled = true
-    }
-}
-
-project(':blog-domain') {
-    bootJar {
-        enabled = false
-    }
-    jar {
-        enabled = true
-    }
-    dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-        implementation project(":system-core")
-    }
-}
-
-project(':clients:naver-client') {
-    bootJar {
-        enabled = false
-    }
-
-    jar {
-        enabled = true
-    }
-
-    dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-        implementation project(":system-core")
-    }
-
-    dependencyManagement {
-        imports {
-            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-        }
-    }
-}
-
-project(':app-blog') {
-    dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-        runtimeOnly 'com.h2database:h2'
-        implementation project(':blog-domain')
-        implementation project(':clients:naver-client')
-    }
-
-    dependencyManagement {
-        imports {
-            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-        }
     }
 }
