@@ -3,25 +3,23 @@ package com.hg.blog.entity.post;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 기본 생성자 Protected 로 지정
-@EntityListeners(value = AuditingEntityListener.class) // Entity Auditing Listener 등록
-@DynamicInsert // null 인 값은 제외하고 insert 쿼리가 날아감
-@DynamicUpdate // null 인 값은 제외하고 update 쿼리가 날아감
 public class Post {
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private Post(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 
     @Id
     @GeneratedValue
@@ -29,15 +27,21 @@ public class Post {
 
     private String title;
 
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime created;
+    private String content;
 
-    @LastModifiedDate
     @Column(updatable = false)
-    private LocalDateTime updated;
+    private LocalDateTime created = LocalDateTime.now();
+
+    @Column(updatable = false)
+    private LocalDateTime updated = LocalDateTime.now();
 
     private boolean deletedYn;
 
+    public static Post of(String title, String content) {
+        return Post.builder()
+            .title(title)
+            .content(content)
+            .build();
+    }
 
 }
