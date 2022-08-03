@@ -1,4 +1,4 @@
-system-core 모듈
+blog-core 모듈
 ===
 
 # 공통 모듈 계층

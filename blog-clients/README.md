@@ -1,4 +1,4 @@
-clients
+blog-clients
 ===
 
 # 내부 모듈 계층

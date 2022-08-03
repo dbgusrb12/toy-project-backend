@@ -1,4 +1,4 @@
-app-blog
+blog-application
 ===
 
 # 어플리케이션 모듈 계층
