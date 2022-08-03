@@ -3,5 +3,5 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation project(':blog-domain')
-    implementation project(':clients:naver-client')
+    implementation project(':blog-clients:naver-client')
 }
