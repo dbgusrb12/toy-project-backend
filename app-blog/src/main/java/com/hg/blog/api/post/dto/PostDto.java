@@ -1,6 +1,6 @@
-package com.hg.blog.post.dto;
+package com.hg.blog.api.post.dto;
 
-import com.hg.blog.entity.post.Post;
+import com.hg.blog.domain.post.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

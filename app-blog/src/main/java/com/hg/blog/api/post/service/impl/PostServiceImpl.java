@@ -1,9 +1,9 @@
-package com.hg.blog.post.service.impl;
+package com.hg.blog.api.post.service.impl;
 
-import com.hg.blog.entity.post.Post;
-import com.hg.blog.entity.post.PostCommandService;
-import com.hg.blog.post.dto.PostDto.PostCreateCommand;
-import com.hg.blog.post.service.PostService;
+import com.hg.blog.api.post.dto.PostDto.PostCreateCommand;
+import com.hg.blog.domain.post.entity.Post;
+import com.hg.blog.domain.post.service.PostCommandService;
+import com.hg.blog.api.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

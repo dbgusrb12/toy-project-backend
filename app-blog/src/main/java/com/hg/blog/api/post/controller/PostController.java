@@ -1,10 +1,10 @@
-package com.hg.blog.post.controller;
+package com.hg.blog.api.post.controller;
 
 import static com.hg.blog.constants.Constants.API_PREFIX;
 import static com.hg.blog.constants.Constants.POST_API;
 
-import com.hg.blog.post.dto.PostDto;
-import com.hg.blog.post.service.PostService;
+import com.hg.blog.api.post.dto.PostDto;
+import com.hg.blog.api.post.service.PostService;
 import com.hg.blog.response.Response;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
