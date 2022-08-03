@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class PostServiceImplTest {
+public class PostServiceTest {
 
     @Mock
     private PostCommandService postCommandService;
