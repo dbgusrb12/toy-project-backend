@@ -1,5 +1,5 @@
 rootProject.name = 'toy-project'
-include 'system-core'
+include 'blog-core'
 include 'blog-domain'
 include 'blog-clients:naver-client'
 include 'blog-application'

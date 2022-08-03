@@ -32,3 +32,9 @@ subprojects {
         useJUnitPlatform()
     }
 }
+
+configure(subprojects.findAll{it.name != 'blog-core'}) {
+    dependencies {
+        implementation project(":blog-core")
+    }
+}
