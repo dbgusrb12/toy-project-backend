@@ -22,7 +22,7 @@ public class PostController {
 
     @PostMapping("")
     public Response<Long> savePost(@Valid @RequestBody PostDto.PostCreateCommand command) {
-        return new Response(postService.savePost(command));
+        return Response.of(postService.savePost(command));
     }
 
 }

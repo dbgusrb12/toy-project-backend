@@ -14,12 +14,16 @@ public class Response<T> {
         this.message = code.getMessage();
     }
 
-    public Response(T body) {
+    private Response(T body) {
         this();
         this.body = body;
     }
 
     public static Response ok() {
         return new Response();
+    }
+
+    public static <T> Response of(T body) {
+        return new Response(body);
     }
 }
