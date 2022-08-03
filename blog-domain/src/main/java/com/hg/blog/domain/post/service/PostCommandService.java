@@ -1,8 +1,19 @@
 package com.hg.blog.domain.post.service;
 
 import com.hg.blog.domain.post.entity.Post;
+import com.hg.blog.domain.post.entity.PostRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface PostCommandService {
+@Service
+@RequiredArgsConstructor
+public class PostCommandService {
 
-    Post savePost(Post post);
+    private final PostRepository postRepository;
+
+    @Transactional
+    public Post savePost(Post post) {
+        return postRepository.save(post);
+    }
 }

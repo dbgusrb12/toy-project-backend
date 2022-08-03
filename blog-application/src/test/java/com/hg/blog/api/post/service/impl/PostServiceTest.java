@@ -1,7 +1,5 @@
 package com.hg.blog.api.post.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.hg.blog.domain.post.service.PostCommandService;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
