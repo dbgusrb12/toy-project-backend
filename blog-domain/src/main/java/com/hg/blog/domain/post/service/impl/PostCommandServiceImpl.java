@@ -1,8 +1,8 @@
-package com.hg.blog.entity.post.impl;
+package com.hg.blog.domain.post.service.impl;
 
-import com.hg.blog.entity.post.Post;
-import com.hg.blog.entity.post.PostCommandService;
-import com.hg.blog.entity.post.PostRepository;
+import com.hg.blog.domain.post.entity.Post;
+import com.hg.blog.domain.post.service.PostCommandService;
+import com.hg.blog.domain.post.entity.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

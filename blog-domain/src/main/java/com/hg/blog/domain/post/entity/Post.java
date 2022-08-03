@@ -1,4 +1,4 @@
-package com.hg.blog.entity.post;
+package com.hg.blog.domain.post.entity;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;

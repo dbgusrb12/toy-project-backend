@@ -1,4 +1,4 @@
-package com.hg.blog.entity.post;
+package com.hg.blog.domain.post.entity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
