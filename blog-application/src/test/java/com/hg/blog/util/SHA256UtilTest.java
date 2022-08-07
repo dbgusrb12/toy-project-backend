@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Test;
 public class SHA256UtilTest {
 
     @Test
-    public void encrypt_test() {
+    public void encryptTest() {
         String sample = "asdasd";
         String encrypt = SHA256Util.getEncrypt(sample);
         System.out.println(encrypt);
     }
 
     @Test
-    public void decrypt_test() {
+    public void decryptTest() {
         String sample = "amwianclanc";
         String encrypt = SHA256Util.getEncrypt(sample);
         String decrypt = SHA256Util.getEncrypt(sample);

@@ -13,7 +13,7 @@ public class AccountRepositoryTest {
     private AccountRepository accountRepository;
 
     @Test
-    public void save_account_test() {
+    public void saveAccountTest() {
         // given, when
         Account savedAccount = saveAccount();
         // then
@@ -24,7 +24,7 @@ public class AccountRepositoryTest {
     }
 
     @Test
-    public void find_by_userid_test() {
+    public void findByUserIdTest() {
         // given
         Account account = saveAccount();
         // when
