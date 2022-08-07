@@ -1,7 +1,6 @@
 package com.hg.blog.api.account.service;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.hg.blog.api.account.dto.AccountDto;
