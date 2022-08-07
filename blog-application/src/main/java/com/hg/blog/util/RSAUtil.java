@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 public class RSAUtil {
 
     private final String ALGORITHM = "RSA";
+    private final String CIPHER_TRANSFORMATION = "RSA/ECB/PKCS1Padding";
     private final String RSA_FOLDER = "rsa";
     private final String PRIVATE_KEY_PATH = "/id_rsa";
     private final String PRIVATE_KEY_BYTE_PATH = "/private-key";
@@ -98,7 +99,7 @@ public class RSAUtil {
      */
     public String decrypt(String strToDecrypt)
         throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        Cipher cipher = Cipher.getInstance(CIPHER_TRANSFORMATION);
         cipher.init(Cipher.DECRYPT_MODE, base64ToPrivateKey());
         byte[] encryptedByte = base64Decode(strToDecrypt.getBytes()); // Base64 decoding
         byte[] decryptedByte = cipher.doFinal(encryptedByte);
@@ -112,7 +113,6 @@ public class RSAUtil {
      *
      * @return
      * @throws NoSuchAlgorithmException
-     * @throws Exception
      */
     private KeyPair createKeyPair() throws NoSuchAlgorithmException {
         KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(ALGORITHM);
