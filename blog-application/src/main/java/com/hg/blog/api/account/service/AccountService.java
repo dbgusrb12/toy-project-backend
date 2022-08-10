@@ -27,7 +27,6 @@ public class AccountService {
     public String signIn(SignInCommand request) {
         request.passwordEncrypt(rsaUtil);
         Account account = accountQueryService.signIn(request.getUserId(), request.getPassword());
-        String token = JWTProvider.generateToken(account);
-        return token;
+        return JWTProvider.generateToken(account);
     }
 }
