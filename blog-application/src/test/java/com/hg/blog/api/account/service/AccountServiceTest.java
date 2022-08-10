@@ -37,7 +37,8 @@ public class AccountServiceTest {
         // when
         accountService.signUp(request);
         // then
-        verify(accountCommandService).saveAccount(any(), any(), any());
+        verify(accountCommandService).saveAccount(request.getUserId(),
+            SHA256Util.getEncrypt(request.getPassword()), request.getNickname());
     }
 
     @Test
