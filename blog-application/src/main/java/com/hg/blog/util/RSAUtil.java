@@ -21,12 +21,14 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class RSAUtil {
 
     private final String ALGORITHM = "RSA";
@@ -44,7 +46,7 @@ public class RSAUtil {
     private String publicKey;
 
     @PostConstruct
-    public void init() throws NoSuchAlgorithmException, IOException {
+    public void init() {
         PrivateKey privateKey;
         PublicKey publicKey;
         try {
@@ -70,19 +72,20 @@ public class RSAUtil {
      *
      * @param strToEncrypt 암호화할 문자열
      * @return Base64로 변환된 암호화된 문자열
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
-     * @throws InvalidKeyException
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
-     * @throws NoSuchPaddingException
      */
-    public String encrypt(String strToEncrypt)
-        throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException {
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, base64ToPublicKey());
-        byte[] encryptedByte = cipher.doFinal(strToEncrypt.getBytes());
-        return base64Encode(encryptedByte); // Base64 변환
+    public String encrypt(String strToEncrypt) {
+        Cipher cipher = getCipherInstance(Cipher.ENCRYPT_MODE, base64ToPublicKey());
+        try {
+            byte[] encryptedByte = cipher.doFinal(strToEncrypt.getBytes());
+            return base64Encode(encryptedByte); // Base64 변환
+        } catch (IllegalBlockSizeException e) {
+            log.error("encrypt error ==> {}", e.getMessage());
+            throw new IllegalArgumentException(e.getMessage());
+        } catch (BadPaddingException e) {
+            log.error("encrypt error ==> {}", e.getMessage());
+            throw new IllegalArgumentException(e.getMessage());
+        }
+
     }
 
     /**
@@ -90,20 +93,34 @@ public class RSAUtil {
      *
      * @param strToDecrypt Base64로 인코딩된 암호화된 문자열
      * @return 복호화된 문자열
-     * @throws InvalidKeySpecException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws NoSuchPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
      */
-    public String decrypt(String strToDecrypt)
-        throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
-        Cipher cipher = Cipher.getInstance(CIPHER_TRANSFORMATION);
-        cipher.init(Cipher.DECRYPT_MODE, base64ToPrivateKey());
-        byte[] encryptedByte = base64Decode(strToDecrypt.getBytes()); // Base64 decoding
-        byte[] decryptedByte = cipher.doFinal(encryptedByte);
-        return new String(decryptedByte);
+    public String decrypt(String strToDecrypt) {
+        Cipher cipher = getCipherInstance(Cipher.DECRYPT_MODE, base64ToPrivateKey());
+        try {
+            byte[] encryptedByte = base64Decode(strToDecrypt.getBytes()); // Base64 decoding
+            byte[] decryptedByte = cipher.doFinal(encryptedByte);
+            return new String(decryptedByte);
+        } catch (IllegalBlockSizeException e) {
+            log.error("encrypt error ==> {}", e.getMessage());
+            throw new IllegalArgumentException(e.getMessage());
+        } catch (BadPaddingException e) {
+            log.error("encrypt error ==> {}", e.getMessage());
+            throw new IllegalArgumentException(e.getMessage());
+        }
+    }
+
+    private Cipher getCipherInstance(int mode, Key key) {
+        try {
+            Cipher cipher = Cipher.getInstance(CIPHER_TRANSFORMATION);
+            cipher.init(mode, key);
+            return cipher;
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            log.error("get cipher instance error ==> {}", e.getMessage());
+            throw new IllegalArgumentException(e.getMessage());
+        } catch (InvalidKeyException e) {
+            log.error("get cipher instance error ==> {}", e.getMessage());
+            throw new IllegalArgumentException("key is not valid");
+        }
     }
 
     // Key Section
@@ -112,13 +129,17 @@ public class RSAUtil {
      * 공개키/개인키 KeyPair 생성
      *
      * @return
-     * @throws NoSuchAlgorithmException
      */
-    private KeyPair createKeyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(ALGORITHM);
-//        keyPairGen.initialize(2048);
-        keyPairGen.initialize(1024);
-        return keyPairGen.genKeyPair();
+    private KeyPair createKeyPair() {
+        try {
+            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(ALGORITHM);
+//            keyPairGen.initialize(2048);
+            keyPairGen.initialize(1024);
+            return keyPairGen.genKeyPair();
+        } catch (NoSuchAlgorithmException e) {
+            log.error("create key pair error ==> {}", e.getMessage());
+            throw new IllegalArgumentException("ALGORITHM is not valid");
+        }
     }
 
     /**
@@ -130,12 +151,19 @@ public class RSAUtil {
      * @throws NoSuchAlgorithmException
      * @throws Exception
      */
-    private PrivateKey getPrivateKey(byte[] keyBytes)
-        throws InvalidKeySpecException, NoSuchAlgorithmException {
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
-        PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
-        return privateKey;
+    private PrivateKey getPrivateKey(byte[] keyBytes) {
+        try {
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
+            PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
+            return privateKey;
+        } catch (NoSuchAlgorithmException e) {
+            log.error("get private key error ==> {}", e.getMessage());
+            throw new IllegalArgumentException("ALGORITHM is not valid");
+        } catch (InvalidKeySpecException e) {
+            log.error("get private key error ==> {}", e.getMessage());
+            throw new IllegalArgumentException("key space is not valid");
+        }
     }
 
     /**
@@ -147,12 +175,19 @@ public class RSAUtil {
      * @throws InvalidKeySpecException
      * @throws Exception
      */
-    private PublicKey getPublicKey(byte[] keyBytes)
-        throws NoSuchAlgorithmException, InvalidKeySpecException {
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
-        PublicKey publicKey = keyFactory.generatePublic(keySpec);
-        return publicKey;
+    private PublicKey getPublicKey(byte[] keyBytes) {
+        try {
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
+            PublicKey publicKey = keyFactory.generatePublic(keySpec);
+            return publicKey;
+        } catch (NoSuchAlgorithmException e) {
+            log.error("get public key error ==> {}", e.getMessage());
+            throw new IllegalArgumentException("ALGORITHM is not valid");
+        } catch (InvalidKeySpecException e) {
+            log.error("get public key error ==> {}", e.getMessage());
+            throw new IllegalArgumentException("key space is not valid");
+        }
     }
 
     /**
@@ -181,11 +216,8 @@ public class RSAUtil {
      * Base64로 인코딩된 문자열을 PrivateKey 로 변환
      *
      * @return PrivateKey 인스턴스
-     * @throws InvalidKeySpecException
-     * @throws NoSuchAlgorithmException
      */
-    private PrivateKey base64ToPrivateKey()
-        throws InvalidKeySpecException, NoSuchAlgorithmException {
+    private PrivateKey base64ToPrivateKey() {
         byte[] decodedByte = base64Decode(this.privateKey.getBytes());
         return getPrivateKey(decodedByte);
     }
@@ -194,10 +226,8 @@ public class RSAUtil {
      * Base64로 인코딩된 문자열을 PublicKey 로 변환
      *
      * @return PublicKey 인스턴스
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
      */
-    private PublicKey base64ToPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+    private PublicKey base64ToPublicKey() {
         byte[] decodedByte = base64Decode(this.publicKey.getBytes());
         return getPublicKey(decodedByte);
     }
@@ -216,11 +246,9 @@ public class RSAUtil {
      * 공개키를 파일로 저장 (classpath:rsa/public-key)
      *
      * @param publicKey
-     * @throws IOException
      */
-    private void savePublicKeyAsFile(PublicKey publicKey) throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource(RSA_FOLDER);
-        String rsaFolderAbsolutePath = classPathResource.getURI().getPath();
+    private void savePublicKeyAsFile(PublicKey publicKey) {
+        final String rsaFolderAbsolutePath = getRsaFolderAbsolutePath();
         saveKeyAsFile(publicKey.getEncoded(), rsaFolderAbsolutePath + PUBLIC_KEY_BYTE_PATH);
     }
 
@@ -228,11 +256,9 @@ public class RSAUtil {
      * 개인키를 파일로 저장 (classpath:rsa/private-key)
      *
      * @param privateKey
-     * @throws IOException
      */
-    private void savePrivateKeyAsFile(PrivateKey privateKey) throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource(RSA_FOLDER);
-        String rsaFolderAbsolutePath = classPathResource.getURI().getPath();
+    private void savePrivateKeyAsFile(PrivateKey privateKey) {
+        final String rsaFolderAbsolutePath = getRsaFolderAbsolutePath();
         saveKeyAsFile(privateKey.getEncoded(), rsaFolderAbsolutePath + PRIVATE_KEY_BYTE_PATH);
     }
 
@@ -241,14 +267,15 @@ public class RSAUtil {
      *
      * @param keyBytes 키의 바이트배열
      * @param filePath 저장할 파일명(풀패스)
-     * @throws IOException
-     * @throws Exception
      */
-    private void saveKeyAsFile(byte[] keyBytes, String filePath) throws IOException {
+    private void saveKeyAsFile(byte[] keyBytes, String filePath) {
         // 파일 시스템에 암호화된 공개키를 쓴다.
-        FileOutputStream fos = new FileOutputStream(filePath);
-        fos.write(keyBytes);
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            fos.write(keyBytes);
+        } catch (IOException e) {
+            log.error("save key as file error ==> {}", e.getMessage());
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     /**
@@ -274,9 +301,8 @@ public class RSAUtil {
      *
      * @param filePath 저장된 파일명
      * @return 키의 바이트배열
-     * @throws Exception the Exception
      */
-    private byte[] getKeyFromFile(String filePath) throws Exception {
+    private byte[] getKeyFromFile(String filePath) throws IOException {
         ClassPathResource classPathResource = new ClassPathResource(RSA_FOLDER + filePath);
         byte[] keyBytes = classPathResource.getInputStream().readAllBytes();
         return keyBytes;
@@ -288,9 +314,8 @@ public class RSAUtil {
      * @param privateKey
      * @throws IOException
      */
-    private void writePrivateKeyFile(PrivateKey privateKey) throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource(RSA_FOLDER);
-        String rsaFolderAbsolutePath = classPathResource.getURI().getPath();
+    private void writePrivateKeyFile(PrivateKey privateKey) {
+        final String rsaFolderAbsolutePath = getRsaFolderAbsolutePath();
         writePemFile(privateKey, PRIVATE_DESCRIPTION, rsaFolderAbsolutePath + PRIVATE_KEY_PATH);
     }
 
@@ -300,10 +325,19 @@ public class RSAUtil {
      * @param publicKey
      * @throws IOException
      */
-    private void writePublicKeyFile(PublicKey publicKey) throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource(RSA_FOLDER);
-        String rsaFolderAbsolutePath = classPathResource.getURI().getPath();
+    private void writePublicKeyFile(PublicKey publicKey) {
+        final String rsaFolderAbsolutePath = getRsaFolderAbsolutePath();
         writePemFile(publicKey, PUBLIC_DESCRIPTION, rsaFolderAbsolutePath + PUBLIC_KEY_PATH);
+    }
+
+    private String getRsaFolderAbsolutePath() {
+        try {
+            ClassPathResource classPathResource = new ClassPathResource(RSA_FOLDER);
+            return classPathResource.getURI().getPath();
+        } catch (IOException e) {
+            log.error("getRsaFolderAbsolutePath error ==> {}", e.getMessage());
+            throw new IllegalArgumentException("url is not valid");
+        }
     }
 
     /**
@@ -312,7 +346,6 @@ public class RSAUtil {
      * @param key         개인키 또는 공개키
      * @param description 키 구분자. "RSA PRIVATE KEY" 또는 "RSA PUBLIC KEY"
      * @param filename    저장할 파일명
-     * @throws Exception
      */
     private void writePemFile(Key key, String description, String filename) {
         PemObject pemObject = new PemObject(description, key.getEncoded());
@@ -324,14 +357,12 @@ public class RSAUtil {
         }
     }
 
-    public String writePublicKeyToString()
-        throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public String writePublicKeyToString() {
         PublicKey publicKey = base64ToPublicKey();
         return writePemToString(publicKey, PUBLIC_DESCRIPTION);
     }
 
-    public String writePrivateKeyToString()
-        throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public String writePrivateKeyToString() {
         PrivateKey privateKey = base64ToPrivateKey();
         return writePemToString(privateKey, PRIVATE_DESCRIPTION);
     }

@@ -13,7 +13,7 @@ public class RSAUtilTest {
     private RSAUtil rsaUtil;
 
     @Test
-    public void rsaEncryptAndDecrypt() throws Exception {
+    public void rsaEncryptAndDecrypt() {
         String originStr = "sample text";
         String encrypt = rsaUtil.encrypt(originStr);
         String decrypt = rsaUtil.decrypt(encrypt);
