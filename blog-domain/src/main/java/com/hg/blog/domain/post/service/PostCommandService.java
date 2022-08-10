@@ -13,7 +13,8 @@ public class PostCommandService {
     private final PostRepository postRepository;
 
     @Transactional
-    public Post savePost(Post post) {
+    public Post savePost(String title, String content) {
+        Post post = Post.of(title, content);
         return postRepository.save(post);
     }
 }

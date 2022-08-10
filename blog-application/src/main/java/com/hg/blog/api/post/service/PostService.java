@@ -12,8 +12,8 @@ public class PostService {
 
     private final PostCommandService postCommandService;
 
-    public long savePost(PostCreateCommand command) {
-        Post post = postCommandService.savePost(command.toEntity());
+    public long savePost(PostCreateCommand request) {
+        Post post = postCommandService.savePost(request.getTitle(), request.getContent());
         return post.getId();
     }
 }
