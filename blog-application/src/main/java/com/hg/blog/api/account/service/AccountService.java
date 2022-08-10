@@ -1,10 +1,12 @@
 package com.hg.blog.api.account.service;
 
+
 import com.hg.blog.api.account.dto.SignInCommand;
 import com.hg.blog.api.account.dto.SignUpCommand;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountCommandService;
 import com.hg.blog.domain.account.service.AccountQueryService;
+import com.hg.blog.util.JWTProvider;
 import com.hg.blog.util.RSAUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class AccountService {
     public String signIn(SignInCommand request) {
         request.passwordEncrypt(rsaUtil);
         Account account = accountQueryService.signIn(request.getUserId(), request.getPassword());
-        // TODO JWT 발급 로직 추가
-        return "JWT";
+        String token = JWTProvider.generateToken(account);
+        return token;
     }
 }
