@@ -11,7 +11,6 @@ import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountCommandService;
 import com.hg.blog.domain.account.service.AccountQueryService;
 import com.hg.blog.util.JWTProvider;
-import com.hg.blog.util.RSAUtil;
 import com.hg.blog.util.SHA256Util;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +37,7 @@ public class AccountServiceTest {
         // when
         accountService.signUp(request);
         // then
-        verify(accountCommandService).addAccount(any(), any(), any());
+        verify(accountCommandService).saveAccount(any(), any(), any());
     }
 
     @Test

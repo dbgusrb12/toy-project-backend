@@ -31,7 +31,7 @@ public class AccountCommandServiceTest {
         given(accountRepository.save(any())).willReturn(account);
 
         // when
-        Account savedAccount = accountCommandService.addAccount(account.getUserId(),
+        Account savedAccount = accountCommandService.saveAccount(account.getUserId(),
             account.getPassword(), account.getNickname());
 
         // then
@@ -47,7 +47,7 @@ public class AccountCommandServiceTest {
         Account account = createAccount();
         given(accountRepository.findByUserId(account.getUserId())).willReturn(Optional.of(account));
         // when
-        Executable execute = () -> accountCommandService.addAccount(account.getUserId(),
+        Executable execute = () -> accountCommandService.saveAccount(account.getUserId(),
             account.getPassword(), account.getNickname());
         // then
         assertThrows(IllegalArgumentException.class, execute);

@@ -19,7 +19,7 @@ public class AccountService {
     private final AccountQueryService accountQueryService;
 
     public void signUp(SignUpCommand request) {
-        accountCommandService.addAccount(request.getUserId(),
+        accountCommandService.saveAccount(request.getUserId(),
             passwordEncrypt(request.getPassword()), request.getNickname());
     }
 
