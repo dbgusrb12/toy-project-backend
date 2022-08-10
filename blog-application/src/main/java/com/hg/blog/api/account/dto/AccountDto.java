@@ -1,6 +1,7 @@
 package com.hg.blog.api.account.dto;
 
 import com.hg.blog.domain.account.entity.Account;
+import com.hg.blog.util.RSAUtil;
 import com.hg.blog.util.SHA256Util;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -24,9 +25,9 @@ public class AccountDto {
         @NotBlank(message = "nickname 은 필수 값입니다.")
         private String nickname;
 
-        public SignUpCommand passwordEncrypt() {
-            // TODO password RSA key 복호화 로직 추가 예정
-            this.password = SHA256Util.getEncrypt(this.password);
+        public SignUpCommand passwordEncrypt(RSAUtil rsaUtil) {
+            String rsaDecrypt = rsaUtil.decrypt(this.password);
+            this.password = SHA256Util.getEncrypt(rsaDecrypt);
             return this;
         }
 
