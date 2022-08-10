@@ -28,9 +28,6 @@ public class AccountServiceTest {
     @Mock
     private AccountQueryService accountQueryService;
 
-    @Mock
-    private RSAUtil rsaUtil;
-
     @InjectMocks
     private AccountService accountService;
 
@@ -38,21 +35,18 @@ public class AccountServiceTest {
     public void signUpTest() {
         // given
         SignUpCommand request = createSignUpCommand();
-        given(rsaUtil.decrypt(any()))
-            .willReturn("password");
         // when
         accountService.signUp(request);
         // then
-        verify(accountCommandService).addAccount(any());
+        verify(accountCommandService).addAccount(any(), any(), any());
     }
 
     @Test
     public void signInTest() {
         SignInCommand request = createSignInCommand();
         Account account = createAccount();
-        given(rsaUtil.decrypt(any()))
-            .willReturn("password");
-        given(accountQueryService.signIn(request.getUserId(), SHA256Util.getEncrypt(request.getPassword())))
+        given(accountQueryService.signIn(request.getUserId(),
+            SHA256Util.getEncrypt(request.getPassword())))
             .willReturn(account);
         String token = accountService.signIn(request);
         String userId = JWTProvider.getUserIdFromJWT(token);
@@ -63,18 +57,11 @@ public class AccountServiceTest {
     }
 
     private SignUpCommand createSignUpCommand() {
-        return SignUpCommand.builder()
-            .userId("userId")
-            .password("password")
-            .nickname("nickname")
-            .build();
+        return new SignUpCommand("userId", "password", "nickname");
     }
 
     private SignInCommand createSignInCommand() {
-        return SignInCommand.builder()
-            .userId("userId")
-            .password("password")
-            .build();
+        return new SignInCommand("userId", "password");
     }
 
     private Account createAccount() {

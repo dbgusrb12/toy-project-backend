@@ -3,7 +3,6 @@ package com.hg.blog.api.account.controller;
 import static com.hg.blog.constants.Constants.ACCOUNT_API;
 import static com.hg.blog.constants.Constants.API_PREFIX;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,11 +40,7 @@ public class AccountControllerTest {
 
     @Test
     public void signUpTest() throws Exception {
-        SignUpCommand request = SignUpCommand.builder()
-            .userId("userId")
-            .password("password")
-            .nickname("nickname")
-            .build();
+        SignUpCommand request = new SignUpCommand("userId", "password", "nickname");
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -56,10 +51,7 @@ public class AccountControllerTest {
 
     @Test
     public void signUpNotUserIdError() throws Exception {
-        SignUpCommand request = SignUpCommand.builder()
-            .password("password")
-            .nickname("nickname")
-            .build();
+        SignUpCommand request = new SignUpCommand(null, "password", "nickname");
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -70,10 +62,7 @@ public class AccountControllerTest {
 
     @Test
     public void signUpNotPasswordError() throws Exception {
-        SignUpCommand request = SignUpCommand.builder()
-            .userId("userId")
-            .nickname("nickname")
-            .build();
+        SignUpCommand request = new SignUpCommand("userId", null, "nickname");
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -84,10 +73,7 @@ public class AccountControllerTest {
 
     @Test
     public void signUpNotNicknameError() throws Exception {
-        SignUpCommand request = SignUpCommand.builder()
-            .userId("userId")
-            .password("password")
-            .build();
+        SignUpCommand request = new SignUpCommand("userId", "password", null);
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -98,10 +84,7 @@ public class AccountControllerTest {
 
     @Test
     public void signInTest() throws Exception {
-        SignInCommand request = SignInCommand.builder()
-            .userId("userId")
-            .password("password")
-            .build();
+        SignInCommand request = new SignInCommand("userId", "password");
         given(accountService.signIn(any()))
             .willReturn("jwtTokenValue");
 
@@ -115,9 +98,7 @@ public class AccountControllerTest {
 
     @Test
     public void signInNotUserIdErrorTest() throws Exception {
-        SignInCommand request = SignInCommand.builder()
-            .password("password")
-            .build();
+        SignInCommand request = new SignInCommand(null, "password");
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-in")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -128,9 +109,7 @@ public class AccountControllerTest {
 
     @Test
     public void signInNotPasswordErrorTest() throws Exception {
-        SignInCommand request = SignInCommand.builder()
-            .userId("userId")
-            .build();
+        SignInCommand request = new SignInCommand("userId", null);
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-in")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

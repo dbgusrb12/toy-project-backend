@@ -13,8 +13,9 @@ public class AccountCommandService {
     private final AccountRepository accountRepository;
 
     @Transactional
-    public Account addAccount(Account account) {
-        checkExistAccount(account.getUserId());
+    public Account addAccount(String userId, String password, String nickname) {
+        checkExistAccount(userId);
+        Account account = Account.of(userId, password, nickname);
         return accountRepository.save(account);
     }
 
