@@ -2,7 +2,6 @@ package com.hg.blog.domain.account.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.hg.blog.domain.account.entity.Account;
@@ -16,38 +15,30 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class AccountCommandServiceTest {
+public class AccountQueryServiceTest {
 
     @Mock
     private AccountRepository accountRepository;
 
     @InjectMocks
-    private AccountCommandService accountCommandService;
+    private AccountQueryService accountQueryService;
 
     @Test
-    public void addAccountTest() {
-        // given
+    public void signInTest() {
         Account account = createAccount();
-        given(accountRepository.save(any())).willReturn(account);
-
-        // when
-        Account savedAccount = accountCommandService.addAccount(account);
-
-        // then
-        assertThat(savedAccount).isNotNull();
-        assertThat(savedAccount.getUserId()).isEqualTo("userid");
-        assertThat(savedAccount.getPassword()).isEqualTo("password");
-        assertThat(savedAccount.getNickname()).isEqualTo("nickname");
+        given(accountRepository.findByUserIdAndPassword(account.getUserId(), account.getPassword()))
+            .willReturn(Optional.of(account));
+        Account signInUser = accountQueryService.signIn(account.getUserId(), account.getPassword());
+        assertThat(signInUser.getUserId()).isEqualTo("userid");
+        assertThat(signInUser.getPassword()).isEqualTo("password");
+        assertThat(signInUser.getNickname()).isEqualTo("nickname");
     }
 
     @Test
-    public void addAccountExistErrorTest() {
-        // given
+    public void signInErrorTest() {
         Account account = createAccount();
-        given(accountRepository.findByUserId(account.getUserId())).willReturn(Optional.of(account));
-        // when
-        Executable execute = () -> accountCommandService.addAccount(account);
-        // then
+        Executable execute = () -> accountQueryService.signIn(account.getUserId(),
+            account.getPassword());
         assertThrows(IllegalArgumentException.class, execute);
     }
 
