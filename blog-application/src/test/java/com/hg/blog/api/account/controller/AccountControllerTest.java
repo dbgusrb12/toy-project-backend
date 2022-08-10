@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hg.blog.api.account.dto.AccountDto;
+import com.hg.blog.api.account.dto.SignUpCommand;
 import com.hg.blog.api.account.service.AccountService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class AccountControllerTest {
 
     @Test
     public void signUpTest() throws Exception {
-        AccountDto.SignUpCommand request = AccountDto.SignUpCommand.builder()
+        SignUpCommand request = SignUpCommand.builder()
             .userId("userId")
             .password("password")
             .nickname("nickname")
@@ -50,7 +50,7 @@ public class AccountControllerTest {
 
     @Test
     public void signUpNotUserIdError() throws Exception {
-        AccountDto.SignUpCommand request = AccountDto.SignUpCommand.builder()
+        SignUpCommand request = SignUpCommand.builder()
             .password("password")
             .nickname("nickname")
             .build();
@@ -64,7 +64,7 @@ public class AccountControllerTest {
 
     @Test
     public void signUpNotPasswordError() throws Exception {
-        AccountDto.SignUpCommand request = AccountDto.SignUpCommand.builder()
+        SignUpCommand request = SignUpCommand.builder()
             .userId("userId")
             .nickname("nickname")
             .build();
@@ -78,7 +78,7 @@ public class AccountControllerTest {
 
     @Test
     public void signUpNotNicknameError() throws Exception {
-        AccountDto.SignUpCommand request = AccountDto.SignUpCommand.builder()
+        SignUpCommand request = SignUpCommand.builder()
             .userId("userId")
             .password("password")
             .build();

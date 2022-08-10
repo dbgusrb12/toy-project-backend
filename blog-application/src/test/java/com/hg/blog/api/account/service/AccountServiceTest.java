@@ -4,7 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import com.hg.blog.api.account.dto.AccountDto;
+import com.hg.blog.api.account.dto.SignUpCommand;
 import com.hg.blog.domain.account.service.AccountCommandService;
 import com.hg.blog.util.RSAUtil;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ public class AccountServiceTest {
     @Test
     public void signUpTest() {
         // given
-        AccountDto.SignUpCommand signUpCommand = createSignUpCommand();
+        SignUpCommand signUpCommand = createSignUpCommand();
         given(rsaUtil.decrypt(any()))
             .willReturn("password");
         // when
@@ -37,8 +37,8 @@ public class AccountServiceTest {
         verify(accountCommandService).addAccount(any());
     }
 
-    private AccountDto.SignUpCommand createSignUpCommand() {
-        return AccountDto.SignUpCommand.builder()
+    private SignUpCommand createSignUpCommand() {
+        return SignUpCommand.builder()
             .userId("userId")
             .password("password")
             .nickname("nickname")

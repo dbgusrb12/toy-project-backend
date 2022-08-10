@@ -3,7 +3,7 @@ package com.hg.blog.api.account.controller;
 import static com.hg.blog.constants.Constants.ACCOUNT_API;
 import static com.hg.blog.constants.Constants.API_PREFIX;
 
-import com.hg.blog.api.account.dto.AccountDto;
+import com.hg.blog.api.account.dto.SignUpCommand;
 import com.hg.blog.api.account.service.AccountService;
 import com.hg.blog.response.Response;
 import javax.validation.Valid;
@@ -21,7 +21,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping("/sign-up")
-    public Response signUp(@Valid @RequestBody AccountDto.SignUpCommand request) {
+    public Response signUp(@Valid @RequestBody SignUpCommand request) {
         accountService.signUp(request);
         return Response.ok();
     }

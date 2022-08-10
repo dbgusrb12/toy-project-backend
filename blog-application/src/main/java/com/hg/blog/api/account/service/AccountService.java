@@ -1,6 +1,6 @@
 package com.hg.blog.api.account.service;
 
-import com.hg.blog.api.account.dto.AccountDto;
+import com.hg.blog.api.account.dto.SignUpCommand;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountCommandService;
 import com.hg.blog.util.RSAUtil;
@@ -11,10 +11,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AccountService {
 
+    private final RSAUtil rsaUtil;
     private final AccountCommandService accountCommandService;
     private final RSAUtil rsaUtil;
 
-    public void signUp(AccountDto.SignUpCommand request) {
+    public void signUp(SignUpCommand request) {
         final Account account = request.passwordEncrypt(rsaUtil).toEntity();
         accountCommandService.addAccount(account);
     }
