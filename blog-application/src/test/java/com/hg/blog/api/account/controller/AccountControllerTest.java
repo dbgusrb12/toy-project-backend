@@ -2,11 +2,17 @@ package com.hg.blog.api.account.controller;
 
 import static com.hg.blog.constants.Constants.ACCOUNT_API;
 import static com.hg.blog.constants.Constants.API_PREFIX;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hg.blog.api.account.dto.SignInCommand;
 import com.hg.blog.api.account.dto.SignUpCommand;
 import com.hg.blog.api.account.service.AccountService;
 import org.junit.jupiter.api.Test;
@@ -84,6 +90,49 @@ public class AccountControllerTest {
             .build();
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .content(getBody(request)))
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void signInTest() throws Exception {
+        SignInCommand request = SignInCommand.builder()
+            .userId("userId")
+            .password("password")
+            .build();
+        given(accountService.signIn(any()))
+            .willReturn("jwtTokenValue");
+
+        mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-in")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .content(getBody(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.body", is("jwtTokenValue")));
+    }
+
+    @Test
+    public void signInNotUserIdErrorTest() throws Exception {
+        SignInCommand request = SignInCommand.builder()
+            .password("password")
+            .build();
+
+        mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-in")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .content(getBody(request)))
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void signInNotPasswordErrorTest() throws Exception {
+        SignInCommand request = SignInCommand.builder()
+            .userId("userId")
+            .build();
+
+        mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-in")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(getBody(request)))
