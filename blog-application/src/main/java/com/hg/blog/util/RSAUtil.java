@@ -16,7 +16,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import javax.annotation.PostConstruct;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -25,9 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
 
-@Component
 @Slf4j
 public class RSAUtil {
 
@@ -45,8 +42,7 @@ public class RSAUtil {
 
     private String publicKey;
 
-    @PostConstruct
-    public void init() {
+    public RSAUtil() {
         PrivateKey privateKey;
         PublicKey publicKey;
         try {
