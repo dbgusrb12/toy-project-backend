@@ -10,7 +10,9 @@ import com.hg.blog.api.post.service.PostService;
 import com.hg.blog.response.Response;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +30,13 @@ public class PostController {
     public Response<Long> savePost(@RequestAttribute String userId,
         @Valid @RequestBody PostDto.PostCreateCommand command) {
         return Response.of(postService.savePost(userId, command));
+    }
+
+    @PutMapping("/{postId}")
+    @Permit(role = Role.USER)
+    public Response<Long> updatePost(@PathVariable long postId, @RequestAttribute String userId,
+        @Valid @RequestBody PostDto.PostUpdateCommand command) {
+        return Response.of(postService.updatePost(postId, userId, command));
     }
 
 }

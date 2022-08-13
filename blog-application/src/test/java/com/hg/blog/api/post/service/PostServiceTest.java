@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 import com.hg.blog.api.post.dto.PostDto.PostCreateCommand;
+import com.hg.blog.api.post.dto.PostDto.PostUpdateCommand;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountQueryService;
 import com.hg.blog.domain.post.entity.Post;
@@ -45,8 +46,26 @@ public class PostServiceTest {
         assertThat(id).isEqualTo(0);
     }
 
+    @Test
+    public void updatePostTest() {
+        Account account = createAccount();
+        given(accountQueryService.getAccountByUserId(userId))
+            .willReturn(account);
+        Post post = createPost(account);
+        long postId = 1;
+        PostUpdateCommand command = createPostUpdateCommand();
+        given(postCommandService.updatePost(account, postId, command.getTitle(),
+            command.getContent())).willReturn(post);
+        long id = postService.updatePost(postId, userId, command);
+        assertThat(id).isEqualTo(0);
+    }
+
     private PostCreateCommand createPostCreateCommand() {
         return new PostCreateCommand(title, content);
+    }
+
+    private PostUpdateCommand createPostUpdateCommand() {
+        return new PostUpdateCommand(title, content);
     }
 
     private Account createAccount() {
