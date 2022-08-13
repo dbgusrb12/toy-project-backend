@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.entity.PostRepository;
+import java.security.AccessControlException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,23 +58,39 @@ public class PostCommandServiceTest {
         given(postRepository.save(any()))
             .willReturn(post);
 
-        Post result = postCommandService.updatePost(postId, updateTitle, updateContent);
+        Post result = postCommandService.updatePost(account, postId, updateTitle, updateContent);
         assertThat(result).isNotNull();
         assertThat(result.getTitle()).isEqualTo(updateTitle);
         assertThat(result.getContent()).isEqualTo(updateContent);
     }
 
     @Test
-    public void updatePostErrorTest() {
+    public void updatePostNotExistPostErrorTest() {
+        Account account = createAccount();
+        Account otherAccount = createAccount();
+        long postId = 1;
+        String title = "post";
+        String content = "content";
+        Post post = Post.of(account, title, content);
+        given(postRepository.findById(postId))
+            .willReturn(Optional.of(post));
+        String updateTitle = "postUpdate";
+        String updateContent = "content 수정";
+        Executable execute = () -> postCommandService.updatePost(otherAccount, postId, updateTitle, updateContent);
+
+        assertThrows(AccessControlException.class, execute);
+    }
+
+    @Test
+    public void updatePostNotOwnerErrorTest() {
+        Account account = createAccount();
         long postId = 1;
         String updateTitle = "postUpdate";
         String updateContent = "content 수정";
-        Executable execute = () -> postCommandService.updatePost(postId, updateTitle, updateContent);
+        Executable execute = () -> postCommandService.updatePost(account, postId, updateTitle, updateContent);
 
         assertThrows(IllegalArgumentException.class, execute);
     }
-
-
 
     private Account createAccount() {
         return Account.of(userId, "password", "nickname");

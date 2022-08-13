@@ -3,6 +3,7 @@ package com.hg.blog.domain.post.service;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.entity.PostRepository;
+import java.security.AccessControlException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +21,17 @@ public class PostCommandService {
     }
 
     @Transactional
-    public Post updatePost(long postId, String title, String content) {
+    public Post updatePost(Account owner, long postId, String title, String content) {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        checkUpdatePermission(owner, post);
         post.updatePost(title, content);
         return postRepository.save(post);
+    }
+
+    private void checkUpdatePermission(Account account, Post post) {
+        if (post.getAccount() != account) {
+            throw new AccessControlException("권한이 없습니다.");
+        }
     }
 }
