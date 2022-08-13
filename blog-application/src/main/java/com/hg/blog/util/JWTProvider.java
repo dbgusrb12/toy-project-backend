@@ -1,5 +1,7 @@
 package com.hg.blog.util;
 
+import static com.hg.blog.constants.Constants.TOKEN_TYPE;
+
 import com.hg.blog.domain.account.entity.Account;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -33,7 +35,7 @@ public class JWTProvider {
     public static String getUserIdFromJWT(String token) {
         Claims claims = Jwts.parser()
             .setSigningKey(JWT_TOKEN_KEY)
-            .parseClaimsJws(token)
+            .parseClaimsJws(token.replaceFirst(TOKEN_TYPE + " ", ""))
             .getBody();
 
         return claims.getSubject();
@@ -41,7 +43,9 @@ public class JWTProvider {
 
     public static boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(JWT_TOKEN_KEY).parseClaimsJws(token);
+            Jwts.parser()
+                .setSigningKey(JWT_TOKEN_KEY)
+                .parseClaimsJws(token.replaceFirst(TOKEN_TYPE + " ", ""));
             return true;
         } catch (SignatureException ex) {
             log.error("Invalid JWT signature");
