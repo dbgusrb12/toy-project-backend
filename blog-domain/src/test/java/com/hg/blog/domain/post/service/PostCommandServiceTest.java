@@ -32,12 +32,10 @@ public class PostCommandServiceTest {
     public void savePostTest() {
         // given
         Account account = createAccount();
-        given(accountQueryService.getAccountByUserId(userId))
-            .willReturn(account);
         given(postRepository.save(any()))
             .willReturn(createPost(account));
         // when
-        Post post = postCommandService.savePost(userId, title, content);
+        Post post = postCommandService.savePost(account, title, content);
         // then
         assertThat(post).isNotNull();
         assertThat(post.getTitle()).isEqualTo(title);

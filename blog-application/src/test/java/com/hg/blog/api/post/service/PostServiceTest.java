@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.given;
 
 import com.hg.blog.api.post.dto.PostDto.PostCreateCommand;
 import com.hg.blog.domain.account.entity.Account;
+import com.hg.blog.domain.account.service.AccountQueryService;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.service.PostCommandService;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,8 @@ public class PostServiceTest {
 
     @Mock
     private PostCommandService postCommandService;
+    @Mock
+    private AccountQueryService accountQueryService;
 
     @InjectMocks
     private PostService postService;
@@ -30,7 +33,9 @@ public class PostServiceTest {
         // given
         Account account = createAccount();
         Post post = createPost(account);
-        given(postCommandService.savePost(userId, title, content))
+        given(accountQueryService.getAccountByUserId(userId))
+            .willReturn(account);
+        given(postCommandService.savePost(account, title, content))
             .willReturn(post);
 
         PostCreateCommand request = createPostCreateCommand();

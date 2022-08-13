@@ -16,8 +16,7 @@ public class PostCommandService {
     private final PostRepository postRepository;
 
     @Transactional
-    public Post savePost(String userId, String title, String content) {
-        Account owner = accountQueryService.getAccountByUserId(userId);
+    public Post savePost(Account owner, String title, String content) {
         Post post = Post.of(owner, title, content);
         return postRepository.save(post);
     }
