@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.entity.AccountRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -19,7 +20,7 @@ public class PostRepositoryTest {
     @Autowired
     private AccountRepository accountRepository;
 
-    private final String title = "post1";
+    private final String title = "post";
     private final String content = "content";
 
     @Test
@@ -35,9 +36,25 @@ public class PostRepositoryTest {
         assertThat(post.getAccount()).isEqualTo(account);
     }
 
+    @Test
+    public void findByIdAndDeletedTest() {
+        // given
+        Account account = saveAccount();
+        Post post = savePost(account);
+
+        // when
+        Optional<Post> byId = postRepository.findByIdAndDeleted(post.getId(), false);
+        // then
+        assertThat(byId.isPresent()).isTrue();
+        Post findPost = byId.get();
+        assertThat(findPost.getTitle()).isEqualTo(title);
+        assertThat(findPost.getContent()).isEqualTo(content);
+        assertThat(findPost.getAccount()).isEqualTo(account);
+    }
+
 
     private Account saveAccount() {
-        String userId = "userid";
+        String userId = "userId";
         Account account = Account.of(userId, "password", "nickname");
         return accountRepository.save(account);
     }

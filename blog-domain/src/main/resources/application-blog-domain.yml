@@ -18,14 +18,14 @@ spring:
       hibernate:
         format_sql: true
     open-in-view: false # spring 영속성 context 를 service / repository 까지만 유지하게 설정 (warning 방지용)
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: debug
-        type:
-          descriptor:
-            sql: trace
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        SQL: debug
+#        type:
+#          descriptor:
+#            sql: trace
 
 ---
 
