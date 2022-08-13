@@ -1,12 +1,13 @@
 package com.hg.blog.domain.post.entity;
 
+import com.hg.blog.domain.account.entity.Account;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,8 +16,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 기본 생성자 Protected 로 지정
 public class Post {
 
-    @Builder(access = AccessLevel.PRIVATE)
-    private Post(String title, String content) {
+    private Post(Account account, String title, String content) {
+        this.account = account;
         this.title = title;
         this.content = content;
     }
@@ -24,6 +25,9 @@ public class Post {
     @Id
     @GeneratedValue
     private long id;
+
+    @ManyToOne
+    private Account account;
 
     private String title;
 
@@ -37,11 +41,8 @@ public class Post {
 
     private boolean deletedYn;
 
-    public static Post of(String title, String content) {
-        return Post.builder()
-            .title(title)
-            .content(content)
-            .build();
+    public static Post of(Account account, String title, String content) {
+        return new Post(account, title, content);
     }
 
 }
