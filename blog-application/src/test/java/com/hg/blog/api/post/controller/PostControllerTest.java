@@ -11,6 +11,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -18,11 +19,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hg.blog.api.post.dto.PostDto.GetPost;
 import com.hg.blog.api.post.dto.PostDto.PostCreateCommand;
 import com.hg.blog.api.post.dto.PostDto.PostUpdateCommand;
 import com.hg.blog.api.post.service.PostService;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.util.JWTProvider;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -175,4 +178,23 @@ public class PostControllerTest {
                 .accept(APPLICATION_JSON_VALUE))
             .andExpect(status().is4xxClientError());
     }
+
+    @Test
+    public void getPostTest() throws Exception {
+        long postId = 1;
+        GetPost getPost = GetPost.of(1, "title", "content", "nickname", LocalDateTime.now(),
+            LocalDateTime.now());
+        given(postService.getPost(postId))
+            .willReturn(getPost);
+        mockMvc.perform(get(API_PREFIX + POST_API + "/{postId}", postId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.body.id", is(1)))
+            .andExpect(jsonPath("$.body.title", is("title")))
+            .andExpect(jsonPath("$.body.content", is("content")))
+            .andExpect(jsonPath("$.body.nickname", is("nickname")));
+    }
+
+
 }

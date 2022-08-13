@@ -11,6 +11,7 @@ import com.hg.blog.response.Response;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,6 +46,11 @@ public class PostController {
     public Response<Void> deletePost(@PathVariable long postId, @RequestAttribute String userId) {
         postService.deletePost(postId, userId);
         return Response.ok();
+    }
+
+    @GetMapping("/{postId}")
+    public Response<PostDto.GetPost> getPost(@PathVariable long postId) {
+        return Response.of(postService.getPost(postId));
     }
 
 }

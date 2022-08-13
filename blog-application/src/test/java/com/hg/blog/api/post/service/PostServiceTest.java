@@ -4,12 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+import com.hg.blog.api.post.dto.PostDto.GetPost;
 import com.hg.blog.api.post.dto.PostDto.PostCreateCommand;
 import com.hg.blog.api.post.dto.PostDto.PostUpdateCommand;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountQueryService;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.service.PostCommandService;
+import com.hg.blog.domain.post.service.PostQueryService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +23,8 @@ public class PostServiceTest {
 
     @Mock
     private PostCommandService postCommandService;
+    @Mock
+    private PostQueryService postQueryService;
     @Mock
     private AccountQueryService accountQueryService;
 
@@ -70,6 +74,20 @@ public class PostServiceTest {
         postService.deletePost(postId, userId);
 
         verify(postCommandService).deletePost(account, postId);
+    }
+
+    @Test
+    public void getPostTest() {
+        Account account = createAccount();
+        Post post = createPost(account);
+        long postId = 1;
+        given(postQueryService.getPost(postId))
+            .willReturn(post);
+        GetPost getPost = postService.getPost(postId);
+        assertThat(getPost).isNotNull();
+        assertThat(getPost.getTitle()).isEqualTo(title);
+        assertThat(getPost.getContent()).isEqualTo(content);
+        assertThat(getPost.getNickname()).isEqualTo(account.getNickname());
     }
 
     private PostCreateCommand createPostCreateCommand() {

@@ -19,11 +19,11 @@ public class Response<T> {
         this.body = body;
     }
 
-    public static Response ok() {
-        return new Response();
+    public static Response<Void> ok() {
+        return new Response<>();
     }
 
-    public static <T> Response of(T body) {
-        return new Response(body);
+    public static <T> Response<T> of(T body) {
+        return new Response<>(body);
     }
 }

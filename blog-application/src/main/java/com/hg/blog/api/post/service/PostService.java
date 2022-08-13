@@ -1,11 +1,13 @@
 package com.hg.blog.api.post.service;
 
+import com.hg.blog.api.post.dto.PostDto.GetPost;
 import com.hg.blog.api.post.dto.PostDto.PostCreateCommand;
 import com.hg.blog.api.post.dto.PostDto.PostUpdateCommand;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountQueryService;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.service.PostCommandService;
+import com.hg.blog.domain.post.service.PostQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class PostService {
 
     private final PostCommandService postCommandService;
+    private final PostQueryService postQueryService;
     private final AccountQueryService accountQueryService;
 
     public long savePost(String userId, PostCreateCommand request) {
@@ -33,5 +36,18 @@ public class PostService {
     public void deletePost(long postId, String userId) {
         Account owner = accountQueryService.getAccountByUserId(userId);
         postCommandService.deletePost(owner, postId);
+    }
+
+    public GetPost getPost(long postId) {
+        Converter converter = new Converter();
+        return converter.ofGetPost(postQueryService.getPost(postId));
+    }
+
+    private static class Converter {
+
+        public GetPost ofGetPost(Post post) {
+            return GetPost.of(post.getId(), post.getTitle(), post.getContent(),
+                post.getAccount().getNickname(), post.getCreated(), post.getUpdated());
+        }
     }
 }
