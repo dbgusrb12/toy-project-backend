@@ -31,6 +31,15 @@ public class PostCommandService {
         return postRepository.save(post);
     }
 
+    @Transactional
+    public void deletePost(Account owner, long postId) {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        checkUpdatePermission(owner, post);
+        post.deletePost();
+        postRepository.save(post);
+    }
+
     private void checkDeletedPost(Post post) {
         if (post.isDeleted()) {
             throw new IllegalArgumentException("삭제된 게시글입니다.");

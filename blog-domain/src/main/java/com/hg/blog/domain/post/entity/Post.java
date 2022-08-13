@@ -50,4 +50,9 @@ public class Post {
         this.content = content;
         this.updated = LocalDateTime.now();
     }
+
+    public void deletePost() {
+        this.deleted = true;
+        this.updated = LocalDateTime.now();
+    }
 }

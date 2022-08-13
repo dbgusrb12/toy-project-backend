@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.post.entity.Post;
@@ -67,6 +68,18 @@ public class PostCommandServiceTest {
     @Test
     public void updatePostNotExistPostErrorTest() {
         Account account = createAccount();
+        long postId = 1;
+        String updateTitle = "postUpdate";
+        String updateContent = "content 수정";
+        Executable execute = () -> postCommandService.updatePost(account, postId, updateTitle,
+            updateContent);
+
+        assertThrows(IllegalArgumentException.class, execute);
+    }
+
+    @Test
+    public void updatePostNotOwnerErrorTest() {
+        Account account = createAccount();
         Account otherAccount = createAccount();
         long postId = 1;
         String title = "post";
@@ -76,20 +89,47 @@ public class PostCommandServiceTest {
             .willReturn(Optional.of(post));
         String updateTitle = "postUpdate";
         String updateContent = "content 수정";
-        Executable execute = () -> postCommandService.updatePost(otherAccount, postId, updateTitle, updateContent);
+        Executable execute = () -> postCommandService.updatePost(otherAccount, postId, updateTitle,
+            updateContent);
 
         assertThrows(AccessControlException.class, execute);
     }
 
     @Test
-    public void updatePostNotOwnerErrorTest() {
+    public void deletePostTest() {
         Account account = createAccount();
         long postId = 1;
-        String updateTitle = "postUpdate";
-        String updateContent = "content 수정";
-        Executable execute = () -> postCommandService.updatePost(account, postId, updateTitle, updateContent);
+        String title = "post";
+        String content = "content";
+        Post post = Post.of(account, title, content);
+        given(postRepository.findById(postId))
+            .willReturn(Optional.of(post));
+        postCommandService.deletePost(account, postId);
+        verify(postRepository).save(any());
+    }
+
+    @Test
+    public void deletePostNotExistPostErrorTest() {
+        Account account = createAccount();
+        long postId = 1;
+        Executable execute = () -> postCommandService.deletePost(account, postId);
 
         assertThrows(IllegalArgumentException.class, execute);
+    }
+
+    @Test
+    public void deletePostNotOwnerErrorTest() {
+        Account account = createAccount();
+        Account otherAccount = createAccount();
+        long postId = 1;
+        String title = "post";
+        String content = "content";
+        Post post = Post.of(account, title, content);
+        given(postRepository.findById(postId))
+            .willReturn(Optional.of(post));
+        Executable execute = () -> postCommandService.deletePost(otherAccount, postId);
+
+        assertThrows(AccessControlException.class, execute);
     }
 
     private Account createAccount() {
