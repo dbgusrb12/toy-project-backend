@@ -9,6 +9,7 @@ import com.hg.blog.api.account.service.AccountService;
 import com.hg.blog.response.Response;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,5 +31,10 @@ public class AccountController {
     @PostMapping("/sign-in")
     public Response<String> signIn(@Valid @RequestBody SignInCommand request) {
         return Response.of(accountService.signIn(request));
+    }
+
+    @GetMapping("/rsa-key")
+    public Response<String> getRsaPublicKey() {
+        return Response.of(accountService.getRsaPublicKey());
     }
 }

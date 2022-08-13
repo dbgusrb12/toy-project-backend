@@ -56,6 +56,14 @@ public class AccountServiceTest {
         assertThat(valid).isTrue();
     }
 
+    @Test
+    public void getRsaPublicKeyTest() {
+        String rsaPublicKey = accountService.getRsaPublicKey();
+        assertThat(rsaPublicKey).isNotNull();
+        assertThat(rsaPublicKey).startsWith("-----BEGIN RSA PUBLIC KEY-----");
+        assertThat(rsaPublicKey).endsWith("-----END RSA PUBLIC KEY-----\n");
+    }
+
     private SignUpCommand createSignUpCommand() {
         return new SignUpCommand("userId", "password", "nickname");
     }

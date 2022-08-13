@@ -7,6 +7,7 @@ import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountCommandService;
 import com.hg.blog.domain.account.service.AccountQueryService;
 import com.hg.blog.util.JWTProvider;
+import com.hg.blog.util.RSAUtil;
 import com.hg.blog.util.SHA256Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,11 @@ public class AccountService {
         Account account = accountQueryService.signIn(request.getUserId(),
             passwordEncrypt(request.getPassword()));
         return JWTProvider.generateToken(account);
+    }
+
+    public String getRsaPublicKey() {
+        RSAUtil rsaUtil = new RSAUtil();
+        return rsaUtil.writePublicKeyToString();
     }
 
     private String passwordEncrypt(String password) {

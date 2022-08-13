@@ -5,6 +5,7 @@ import static com.hg.blog.constants.Constants.API_PREFIX;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -116,6 +117,17 @@ public class AccountControllerTest {
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(getBody(request)))
             .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void getRsaPublicKeyTest() throws Exception {
+        given(accountService.getRsaPublicKey())
+            .willReturn("rsaPublicKey");
+        mockMvc.perform(get(API_PREFIX + ACCOUNT_API + "/rsa-key")
+                .content(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.body", is("rsaPublicKey")));
     }
 
 }

@@ -54,11 +54,11 @@ public class RSAUtil {
             KeyPair keyPair = this.createKeyPair();
             privateKey = keyPair.getPrivate();
             publicKey = keyPair.getPublic();
+            writePrivateKeyFile(privateKey);
+            savePrivateKeyAsFile(privateKey);
+            writePublicKeyFile(publicKey);
+            savePublicKeyAsFile(publicKey);
         }
-        writePrivateKeyFile(privateKey);
-        savePrivateKeyAsFile(privateKey);
-        writePublicKeyFile(publicKey);
-        savePublicKeyAsFile(publicKey);
         this.privateKey = privateKeyToBase64(privateKey);
         this.publicKey = publicKeyToBase64(publicKey);
     }
