@@ -5,6 +5,7 @@ import static com.hg.blog.constants.Constants.API_PREFIX;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -19,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(AccountController.class)
@@ -44,8 +44,8 @@ public class AccountControllerTest {
         SignUpCommand request = new SignUpCommand("userId", "password", "nickname");
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE)
                 .content(getBody(request)))
             .andExpect(status().isOk());
     }
@@ -55,8 +55,8 @@ public class AccountControllerTest {
         SignUpCommand request = new SignUpCommand(null, "password", "nickname");
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE)
                 .content(getBody(request)))
             .andExpect(status().is4xxClientError());
     }
@@ -66,8 +66,8 @@ public class AccountControllerTest {
         SignUpCommand request = new SignUpCommand("userId", null, "nickname");
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE)
                 .content(getBody(request)))
             .andExpect(status().is4xxClientError());
     }
@@ -77,8 +77,8 @@ public class AccountControllerTest {
         SignUpCommand request = new SignUpCommand("userId", "password", null);
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE)
                 .content(getBody(request)))
             .andExpect(status().is4xxClientError());
     }
@@ -90,8 +90,8 @@ public class AccountControllerTest {
             .willReturn("jwtTokenValue");
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-in")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE)
                 .content(getBody(request)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.body", is("jwtTokenValue")));
@@ -102,8 +102,8 @@ public class AccountControllerTest {
         SignInCommand request = new SignInCommand(null, "password");
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-in")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE)
                 .content(getBody(request)))
             .andExpect(status().is4xxClientError());
     }
@@ -113,8 +113,8 @@ public class AccountControllerTest {
         SignInCommand request = new SignInCommand("userId", null);
 
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-in")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE)
                 .content(getBody(request)))
             .andExpect(status().is4xxClientError());
     }
@@ -124,8 +124,8 @@ public class AccountControllerTest {
         given(accountService.getRsaPublicKey())
             .willReturn("rsaPublicKey");
         mockMvc.perform(get(API_PREFIX + ACCOUNT_API + "/rsa-key")
-                .content(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
+                .content(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.body", is("rsaPublicKey")));
     }
