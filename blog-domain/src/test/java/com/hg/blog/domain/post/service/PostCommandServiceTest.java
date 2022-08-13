@@ -25,7 +25,6 @@ public class PostCommandServiceTest {
     private PostRepository postRepository;
     @InjectMocks
     private PostCommandService postCommandService;
-    private final String userId = "userId";
     private final String title = "post";
     private final String content = "content";
 
@@ -125,6 +124,7 @@ public class PostCommandServiceTest {
     }
 
     private Account createAccount() {
+        String userId = "userId";
         return Account.of(userId, "password", "nickname");
     }
 
