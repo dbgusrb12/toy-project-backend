@@ -39,7 +39,7 @@ public class Post {
     @Column(updatable = false)
     private LocalDateTime updated = LocalDateTime.now();
 
-    private boolean isDeleted;
+    private boolean deleted;
 
     public static Post of(Account account, String title, String content) {
         return new Post(account, title, content);
