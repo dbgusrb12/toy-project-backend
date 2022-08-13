@@ -25,8 +25,8 @@ public class PostCommandServiceTest {
     private PostRepository postRepository;
     @InjectMocks
     private PostCommandService postCommandService;
-    private final String userId = "userid";
-    private final String title = "post1";
+    private final String userId = "userId";
+    private final String title = "post";
     private final String content = "content";
 
     @Test
@@ -48,8 +48,6 @@ public class PostCommandServiceTest {
     public void updatePostTest() {
         Account account = createAccount();
         long postId = 1;
-        String title = "post";
-        String content = "content";
         Post post = Post.of(account, title, content);
         given(postRepository.findById(postId))
             .willReturn(Optional.of(post));
@@ -82,8 +80,6 @@ public class PostCommandServiceTest {
         Account account = createAccount();
         Account otherAccount = createAccount();
         long postId = 1;
-        String title = "post";
-        String content = "content";
         Post post = Post.of(account, title, content);
         given(postRepository.findById(postId))
             .willReturn(Optional.of(post));
@@ -99,8 +95,6 @@ public class PostCommandServiceTest {
     public void deletePostTest() {
         Account account = createAccount();
         long postId = 1;
-        String title = "post";
-        String content = "content";
         Post post = Post.of(account, title, content);
         given(postRepository.findById(postId))
             .willReturn(Optional.of(post));
@@ -122,8 +116,6 @@ public class PostCommandServiceTest {
         Account account = createAccount();
         Account otherAccount = createAccount();
         long postId = 1;
-        String title = "post";
-        String content = "content";
         Post post = Post.of(account, title, content);
         given(postRepository.findById(postId))
             .willReturn(Optional.of(post));

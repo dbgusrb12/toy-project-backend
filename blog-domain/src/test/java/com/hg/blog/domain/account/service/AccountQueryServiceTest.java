@@ -29,7 +29,7 @@ public class AccountQueryServiceTest {
         given(accountRepository.findByUserIdAndPassword(account.getUserId(), account.getPassword()))
             .willReturn(Optional.of(account));
         Account signInUser = accountQueryService.signIn(account.getUserId(), account.getPassword());
-        assertThat(signInUser.getUserId()).isEqualTo("userid");
+        assertThat(signInUser.getUserId()).isEqualTo("userId");
         assertThat(signInUser.getPassword()).isEqualTo("password");
         assertThat(signInUser.getNickname()).isEqualTo("nickname");
     }
@@ -45,7 +45,7 @@ public class AccountQueryServiceTest {
     @Test
     public void getAccountByUserIdTest() {
         Account account = createAccount();
-        String userId = "userid";
+        String userId = "userId";
         given(accountRepository.findByUserId(userId))
             .willReturn(Optional.of(account));
         Account findAccount = accountQueryService.getAccountByUserId(userId);
@@ -57,11 +57,11 @@ public class AccountQueryServiceTest {
 
     @Test
     public void getAccountByUserIdErrorTest() {
-        Executable execute = () -> accountQueryService.getAccountByUserId("userid");
+        Executable execute = () -> accountQueryService.getAccountByUserId("userId");
         assertThrows(IllegalArgumentException.class, execute);
     }
 
     private Account createAccount() {
-        return Account.of("userid", "password", "nickname");
+        return Account.of("userId", "password", "nickname");
     }
 }

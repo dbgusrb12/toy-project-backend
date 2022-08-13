@@ -20,7 +20,7 @@ public class AccountRepositoryTest {
         Account savedAccount = saveAccount();
         // then
         assertThat(savedAccount).isNotNull();
-        assertThat(savedAccount.getUserId()).isEqualTo("userid");
+        assertThat(savedAccount.getUserId()).isEqualTo("userId");
         assertThat(savedAccount.getPassword()).isEqualTo("password");
         assertThat(savedAccount.getNickname()).isEqualTo("nickname");
     }
@@ -34,14 +34,13 @@ public class AccountRepositoryTest {
 
         // then
         assertThat(findAccount).isNotNull();
-        assertThat(findAccount.getUserId()).isEqualTo("userid");
+        assertThat(findAccount.getUserId()).isEqualTo("userId");
         assertThat(findAccount.getPassword()).isEqualTo("password");
         assertThat(findAccount.getNickname()).isEqualTo("nickname");
     }
 
-
     private Account saveAccount() {
-        Account account = Account.of("userid", "password", "nickname");
+        Account account = Account.of("userId", "password", "nickname");
         Account savedAccount = accountRepository.save(account);
         return savedAccount;
     }

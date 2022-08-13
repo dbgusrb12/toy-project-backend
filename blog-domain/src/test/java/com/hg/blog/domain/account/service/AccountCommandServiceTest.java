@@ -36,7 +36,7 @@ public class AccountCommandServiceTest {
 
         // then
         assertThat(savedAccount).isNotNull();
-        assertThat(savedAccount.getUserId()).isEqualTo("userid");
+        assertThat(savedAccount.getUserId()).isEqualTo("userId");
         assertThat(savedAccount.getPassword()).isEqualTo("password");
         assertThat(savedAccount.getNickname()).isEqualTo("nickname");
     }
@@ -54,6 +54,6 @@ public class AccountCommandServiceTest {
     }
 
     private Account createAccount() {
-        return Account.of("userid", "password", "nickname");
+        return Account.of("userId", "password", "nickname");
     }
 }
