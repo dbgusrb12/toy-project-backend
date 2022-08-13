@@ -42,6 +42,25 @@ public class AccountQueryServiceTest {
         assertThrows(IllegalArgumentException.class, execute);
     }
 
+    @Test
+    public void getAccountByUserIdTest() {
+        Account account = createAccount();
+        String userId = "userid";
+        given(accountRepository.findByUserId(userId))
+            .willReturn(Optional.of(account));
+        Account findAccount = accountQueryService.getAccountByUserId(userId);
+        assertThat(findAccount).isNotNull();
+        assertThat(findAccount.getUserId()).isEqualTo(userId);
+        assertThat(findAccount.getPassword()).isEqualTo("password");
+        assertThat(findAccount.getNickname()).isEqualTo("nickname");
+    }
+
+    @Test
+    public void getAccountByUserIdErrorTest() {
+        Executable execute = () -> accountQueryService.getAccountByUserId("userid");
+        assertThrows(IllegalArgumentException.class, execute);
+    }
+
     private Account createAccount() {
         return Account.of("userid", "password", "nickname");
     }

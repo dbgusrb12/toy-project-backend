@@ -2,7 +2,6 @@ package com.hg.blog.domain.account.service;
 
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.entity.AccountRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +14,11 @@ public class AccountQueryService {
 
     public Account signIn(String userId, String password) {
         return accountRepository.findByUserIdAndPassword(userId, password)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+    }
+
+    public Account getAccountByUserId(String userId) {
+        return accountRepository.findByUserId(userId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
     }
 }
