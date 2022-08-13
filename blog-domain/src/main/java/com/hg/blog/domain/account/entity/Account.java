@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account {
 
-    @Builder(access = AccessLevel.PRIVATE)
     private Account(String userId, String password, String nickname) {
         this.userId = userId;
         this.password = password;
@@ -41,10 +40,6 @@ public class Account {
     private boolean deletedYn;
 
     public static Account of(String userId, String password, String nickname) {
-        return Account.builder()
-            .userId(userId)
-            .password(password)
-            .nickname(nickname)
-            .build();
+        return new Account(userId, password, nickname);
     }
 }

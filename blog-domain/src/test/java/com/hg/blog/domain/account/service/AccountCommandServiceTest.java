@@ -25,7 +25,7 @@ public class AccountCommandServiceTest {
     private AccountCommandService accountCommandService;
 
     @Test
-    public void addAccountTest() {
+    public void saveAccountTest() {
         // given
         Account account = createAccount();
         given(accountRepository.save(any())).willReturn(account);
@@ -42,7 +42,7 @@ public class AccountCommandServiceTest {
     }
 
     @Test
-    public void addAccountExistErrorTest() {
+    public void saveAccountExistErrorTest() {
         // given
         Account account = createAccount();
         given(accountRepository.findByUserId(account.getUserId())).willReturn(Optional.of(account));
