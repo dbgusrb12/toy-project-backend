@@ -25,7 +25,13 @@ public class PostService {
     public long updatePost(long postId, String userId, PostUpdateCommand command) {
         // 작성자인지 확인하는 로직은 어느 layer 의 책임일까요..?
         Account owner = accountQueryService.getAccountByUserId(userId);
-        Post post = postCommandService.updatePost(owner, postId, command.getTitle(), command.getContent());
+        Post post = postCommandService.updatePost(owner, postId, command.getTitle(),
+            command.getContent());
         return post.getId();
+    }
+
+    public void deletePost(long postId, String userId) {
+        Account owner = accountQueryService.getAccountByUserId(userId);
+        postCommandService.deletePost(owner, postId);
     }
 }

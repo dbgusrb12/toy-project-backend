@@ -8,7 +8,9 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -63,8 +65,6 @@ public class PostControllerTest {
     @Test
     public void savePostAuthErrorTest() throws Exception {
         PostCreateCommand request = new PostCreateCommand("post1", "content");
-        given(postService.savePost(eq("userId"), any()))
-            .willReturn(1L);
 
         mockMvc.perform(post(API_PREFIX + POST_API)
                 .contentType(APPLICATION_JSON_VALUE)
@@ -111,8 +111,6 @@ public class PostControllerTest {
     public void updatePostNotAuthErrorTest() throws Exception {
         PostUpdateCommand request = new PostUpdateCommand("title", "content");
         long postId = 1;
-        given(postService.updatePost(eq(postId), eq("userId"), any()))
-            .willReturn(postId);
 
         mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
                 .contentType(APPLICATION_JSON_VALUE)
@@ -152,6 +150,29 @@ public class PostControllerTest {
                 .accept(APPLICATION_JSON_VALUE)
                 .header(AUTH_HEADER, TOKEN_TYPE + " " + token)
                 .content(getBody(request)))
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void deletePostTest() throws Exception {
+        long postId = 1;
+        Account account = Account.of("userId", "password", "nickname");
+        String token = JWTProvider.generateToken(account);
+        willDoNothing().given(postService).deletePost(postId, "userId");
+
+        mockMvc.perform(delete(API_PREFIX + POST_API + "/{postId}", postId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE)
+                .header(AUTH_HEADER, TOKEN_TYPE + " " + token))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void deletePostNotAuthTest() throws Exception {
+        long postId = 1;
+        mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
             .andExpect(status().is4xxClientError());
     }
 }

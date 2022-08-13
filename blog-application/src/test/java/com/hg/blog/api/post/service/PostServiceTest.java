@@ -2,6 +2,7 @@ package com.hg.blog.api.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 import com.hg.blog.api.post.dto.PostDto.PostCreateCommand;
 import com.hg.blog.api.post.dto.PostDto.PostUpdateCommand;
@@ -58,6 +59,17 @@ public class PostServiceTest {
             command.getContent())).willReturn(post);
         long id = postService.updatePost(postId, userId, command);
         assertThat(id).isEqualTo(0);
+    }
+
+    @Test
+    public void deletePostTest() {
+        Account account = createAccount();
+        given(accountQueryService.getAccountByUserId(userId))
+            .willReturn(account);
+        long postId = 1;
+        postService.deletePost(postId, userId);
+
+        verify(postCommandService).deletePost(account, postId);
     }
 
     private PostCreateCommand createPostCreateCommand() {
