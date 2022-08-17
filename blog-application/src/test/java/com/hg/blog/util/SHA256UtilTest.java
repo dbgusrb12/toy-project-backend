@@ -9,14 +9,14 @@ public class SHA256UtilTest {
 
     @Test
     public void encryptTest() {
-        String sample = "asdasd";
+        String sample = "sample";
         String encrypt = SHA256Util.getEncrypt(sample);
         System.out.println(encrypt);
     }
 
     @Test
     public void decryptTest() {
-        String sample = "amwianclanc";
+        String sample = "sample";
         String encrypt = SHA256Util.getEncrypt(sample);
         String decrypt = SHA256Util.getEncrypt(sample);
         assertThat(encrypt).isEqualTo(decrypt);
