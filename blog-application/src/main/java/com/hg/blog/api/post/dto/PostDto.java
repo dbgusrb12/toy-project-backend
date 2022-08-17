@@ -38,8 +38,14 @@ public class PostDto {
         private LocalDateTime created;
         private LocalDateTime updated;
 
-        public static GetPost of(long id, String title, String content, String nickname,
-            LocalDateTime created, LocalDateTime updated) {
+        public static GetPost of(
+            long id,
+            String title,
+            String content,
+            String nickname,
+            LocalDateTime created,
+            LocalDateTime updated
+        ) {
             return new GetPost(id, title, content, nickname, created, updated);
         }
     }

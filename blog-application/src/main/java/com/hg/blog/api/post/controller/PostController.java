@@ -29,15 +29,20 @@ public class PostController {
 
     @PostMapping("")
     @Permit(Role.USER)
-    public Response<Long> savePost(@RequestAttribute String userId,
-        @Valid @RequestBody PostDto.PostCreateCommand command) {
+    public Response<Long> savePost(
+        @RequestAttribute String userId,
+        @Valid @RequestBody PostDto.PostCreateCommand command
+    ) {
         return Response.of(postService.savePost(userId, command));
     }
 
     @PutMapping("/{postId}")
     @Permit(Role.USER)
-    public Response<Long> updatePost(@PathVariable long postId, @RequestAttribute String userId,
-        @Valid @RequestBody PostDto.PostUpdateCommand command) {
+    public Response<Long> updatePost(
+        @PathVariable long postId,
+        @RequestAttribute String userId,
+        @Valid @RequestBody PostDto.PostUpdateCommand command
+    ) {
         return Response.of(postService.updatePost(postId, userId, command));
     }
 
