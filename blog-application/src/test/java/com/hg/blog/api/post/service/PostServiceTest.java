@@ -44,46 +44,67 @@ public class PostServiceTest {
         given(postCommandService.savePost(account, title, content))
             .willReturn(post);
 
-        PostCreateCommand request = createPostCreateCommand();
         // when
+        PostCreateCommand request = createPostCreateCommand();
         long id = postService.savePost(userId, request);
+
         // then
         assertThat(id).isEqualTo(0);
     }
 
     @Test
     public void updatePostTest() {
+        // given
         Account account = createAccount();
-        given(accountQueryService.getAccountByUserId(userId))
-            .willReturn(account);
         Post post = createPost(account);
         long postId = 1;
         PostUpdateCommand command = createPostUpdateCommand();
-        given(postCommandService.updatePost(account, postId, command.getTitle(),
-            command.getContent())).willReturn(post);
+        given(accountQueryService.getAccountByUserId(userId))
+            .willReturn(account);
+        given(
+            postCommandService.updatePost(
+                account,
+                postId,
+                command.getTitle(),
+                command.getContent()
+            )
+        ).willReturn(post);
+
+        // when
         long id = postService.updatePost(postId, userId, command);
+
+        // then
         assertThat(id).isEqualTo(0);
     }
 
     @Test
     public void deletePostTest() {
+        // given
         Account account = createAccount();
         given(accountQueryService.getAccountByUserId(userId))
             .willReturn(account);
+
+        // when
         long postId = 1;
         postService.deletePost(postId, userId);
 
+        // then
         verify(postCommandService).deletePost(account, postId);
     }
 
     @Test
     public void getPostTest() {
+        // given
         Account account = createAccount();
         Post post = createPost(account);
         long postId = 1;
         given(postQueryService.getPost(postId))
             .willReturn(post);
+
+        // when
         GetPost getPost = postService.getPost(postId);
+
+        // then
         assertThat(getPost).isNotNull();
         assertThat(getPost.getTitle()).isEqualTo(title);
         assertThat(getPost.getContent()).isEqualTo(content);

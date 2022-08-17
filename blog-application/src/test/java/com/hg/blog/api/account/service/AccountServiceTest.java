@@ -33,21 +33,31 @@ public class AccountServiceTest {
     public void signUpTest() {
         // given
         SignUpCommand request = createSignUpCommand();
+
         // when
         accountService.signUp(request);
+
         // then
-        verify(accountCommandService).saveAccount(request.getUserId(),
-            SHA256Util.getEncrypt(request.getPassword()), request.getNickname());
+        verify(accountCommandService).saveAccount(
+            request.getUserId(),
+            SHA256Util.getEncrypt(request.getPassword()),
+            request.getNickname()
+        );
     }
 
     @Test
     public void signInTest() {
+        // given
         SignInCommand request = createSignInCommand();
         Account account = createAccount();
-        given(accountQueryService.signIn(request.getUserId(),
-            SHA256Util.getEncrypt(request.getPassword())))
+        String encryptPassword = SHA256Util.getEncrypt(request.getPassword());
+        given(accountQueryService.signIn(request.getUserId(), encryptPassword))
             .willReturn(account);
+
+        // when
         String token = accountService.signIn(request);
+
+        // then
         String userId = JWTProvider.getUserIdFromJWT(token);
         boolean valid = JWTProvider.validateToken(token);
         assertThat(token).isNotNull();
@@ -57,7 +67,10 @@ public class AccountServiceTest {
 
     @Test
     public void getRsaPublicKeyTest() {
+        // given, when
         String rsaPublicKey = accountService.getRsaPublicKey();
+
+        // then
         assertThat(rsaPublicKey).isNotNull();
         assertThat(rsaPublicKey).startsWith("-----BEGIN RSA PUBLIC KEY-----");
         assertThat(rsaPublicKey).endsWith("-----END RSA PUBLIC KEY-----\n");
