@@ -28,7 +28,7 @@ public class AccountService {
     }
 
     public String signIn(SignInCommand request) {
-        Account account = accountQueryService.signIn(
+        final Account account = accountQueryService.signIn(
             request.getUserId(),
             passwordEncrypt(request.getPassword())
         );
@@ -36,7 +36,7 @@ public class AccountService {
     }
 
     public String getRsaPublicKey() {
-        RSAUtil rsaUtil = new RSAUtil();
+        final RSAUtil rsaUtil = new RSAUtil();
         return rsaUtil.writePublicKeyToString();
     }
 
