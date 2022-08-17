@@ -1,6 +1,7 @@
 package com.hg.blog.domain.account.entity;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,5 +41,24 @@ public class Account {
 
     public static Account of(String userId, String password, String nickname) {
         return new Account(userId, password, nickname);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof Account)) {
+            return false;
+        }
+
+        Account account = (Account) o;
+        return this.userId.equals(account.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(userId);
     }
 }

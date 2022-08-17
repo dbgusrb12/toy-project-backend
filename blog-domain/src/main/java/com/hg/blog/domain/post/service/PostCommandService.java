@@ -39,7 +39,7 @@ public class PostCommandService {
     }
 
     private void checkUpdatePermission(Account account, Post post) {
-        if (post.getAccount() != account) {
+        if (!account.equals(post.getAccount())) {
             throw new AccessControlException("권한이 없습니다.");
         }
     }

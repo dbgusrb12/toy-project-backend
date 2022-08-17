@@ -101,7 +101,7 @@ public class PostCommandServiceTest {
         String updateContent = "content 수정";
 
         // when
-        Account otherAccount = createAccount();
+        Account otherAccount = Account.of("userId2", "password2", "nickname2");
         Executable execute = () -> postCommandService.updatePost(
             otherAccount,
             postId,
@@ -152,7 +152,7 @@ public class PostCommandServiceTest {
             .willReturn(Optional.of(post));
 
         // when
-        Account otherAccount = createAccount();
+        Account otherAccount = Account.of("userId2", "password2", "nickname2");
         Executable execute = () -> postCommandService.deletePost(otherAccount, postId);
 
         // then
