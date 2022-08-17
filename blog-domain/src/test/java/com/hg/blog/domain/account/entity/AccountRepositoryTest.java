@@ -2,6 +2,7 @@ package com.hg.blog.domain.account.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,6 +19,7 @@ public class AccountRepositoryTest {
     public void saveAccountTest() {
         // given, when
         Account savedAccount = saveAccount();
+
         // then
         assertThat(savedAccount).isNotNull();
         assertThat(savedAccount.getUserId()).isEqualTo("userId");
@@ -29,11 +31,13 @@ public class AccountRepositoryTest {
     public void findByUserIdTest() {
         // given
         Account account = saveAccount();
+
         // when
-        Account findAccount = accountRepository.findByUserId(account.getUserId()).get();
+        Optional<Account> byId = accountRepository.findByUserId(account.getUserId());
 
         // then
-        assertThat(findAccount).isNotNull();
+        assertThat(byId.isPresent()).isTrue();
+        Account findAccount = byId.get();
         assertThat(findAccount.getUserId()).isEqualTo("userId");
         assertThat(findAccount.getPassword()).isEqualTo("password");
         assertThat(findAccount.getNickname()).isEqualTo("nickname");

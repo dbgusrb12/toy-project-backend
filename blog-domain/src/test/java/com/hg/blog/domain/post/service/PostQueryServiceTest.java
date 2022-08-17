@@ -27,13 +27,17 @@ public class PostQueryServiceTest {
 
     @Test
     public void getPostTest() {
+        // given
         long postId = 1;
         Account account = createAccount();
         Post post = createPost(account);
         given(postRepository.findByIdAndDeleted(postId, false))
             .willReturn(Optional.of(post));
 
+        // when
         Post getPost = postQueryService.getPost(postId);
+
+        // then
         assertThat(getPost).isNotNull();
         assertThat(getPost.getTitle()).isEqualTo(title);
         assertThat(getPost.getContent()).isEqualTo(content);
@@ -42,8 +46,13 @@ public class PostQueryServiceTest {
 
     @Test
     public void getPostNotExistError() {
+        // given
         long postId = 1;
+
+        // when
         Executable execute = () -> postQueryService.getPost(postId);
+
+        // then
         assertThrows(IllegalArgumentException.class, execute);
     }
 

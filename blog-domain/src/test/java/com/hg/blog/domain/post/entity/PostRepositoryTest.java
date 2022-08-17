@@ -27,8 +27,10 @@ public class PostRepositoryTest {
     public void savePostTest() {
         // given
         Account account = saveAccount();
+
         // when
         Post post = savePost(account);
+
         // then
         assertThat(post).isNotNull();
         assertThat(post.getTitle()).isEqualTo(title);
@@ -44,6 +46,7 @@ public class PostRepositoryTest {
 
         // when
         Optional<Post> byId = postRepository.findByIdAndDeleted(post.getId(), false);
+
         // then
         assertThat(byId.isPresent()).isTrue();
         Post findPost = byId.get();
@@ -54,8 +57,7 @@ public class PostRepositoryTest {
 
 
     private Account saveAccount() {
-        String userId = "userId";
-        Account account = Account.of(userId, "password", "nickname");
+        Account account = Account.of("userId", "password", "nickname");
         return accountRepository.save(account);
     }
 

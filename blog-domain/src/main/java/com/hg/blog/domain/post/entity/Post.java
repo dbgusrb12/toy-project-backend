@@ -45,13 +45,13 @@ public class Post {
         return new Post(account, title, content);
     }
 
-    public void updatePost(String title, String content) {
+    public void update(String title, String content) {
         this.title = title;
         this.content = content;
         this.updated = LocalDateTime.now();
     }
 
-    public void deletePost() {
+    public void delete() {
         this.deleted = true;
         this.updated = LocalDateTime.now();
     }

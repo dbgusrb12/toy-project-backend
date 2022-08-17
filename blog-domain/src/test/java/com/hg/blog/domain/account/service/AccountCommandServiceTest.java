@@ -46,9 +46,11 @@ public class AccountCommandServiceTest {
         // given
         Account account = createAccount();
         given(accountRepository.findByUserId(account.getUserId())).willReturn(Optional.of(account));
+
         // when
         Executable execute = () -> accountCommandService.saveAccount(account.getUserId(),
             account.getPassword(), account.getNickname());
+
         // then
         assertThrows(IllegalArgumentException.class, execute);
     }

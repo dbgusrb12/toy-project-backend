@@ -24,10 +24,8 @@ public class PostCommandService {
     public Post updatePost(Account owner, long postId, String title, String content) {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
-        // TODO 삭제된 게시글에 대한 정책 수립 필요. 삭제된 게시글로 표시할건지, 아니면 존재하지 않는 게시글로 표시할건지.
-        checkDeletedPost(post);
         checkUpdatePermission(owner, post);
-        post.updatePost(title, content);
+        post.update(title, content);
         return postRepository.save(post);
     }
 
@@ -36,14 +34,8 @@ public class PostCommandService {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
         checkUpdatePermission(owner, post);
-        post.deletePost();
+        post.delete();
         postRepository.save(post);
-    }
-
-    private void checkDeletedPost(Post post) {
-        if (post.isDeleted()) {
-            throw new IllegalArgumentException("삭제된 게시글입니다.");
-        }
     }
 
     private void checkUpdatePermission(Account account, Post post) {
