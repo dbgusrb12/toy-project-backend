@@ -23,12 +23,10 @@ public class ErrorResponse {
     }
 
     public static ErrorResponse of(HttpStatus status, String message) {
-        ErrorResponse errorResponse = new ErrorResponse(status, message);
-        return errorResponse;
+        return new ErrorResponse(status, message);
     }
 
     public static ErrorResponse of(HttpStatus status, RuntimeException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(status, ex);
-        return errorResponse;
+        return new ErrorResponse(status, ex);
     }
 }
