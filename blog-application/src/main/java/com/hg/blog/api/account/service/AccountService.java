@@ -20,13 +20,18 @@ public class AccountService {
     private final AccountQueryService accountQueryService;
 
     public void signUp(SignUpCommand request) {
-        accountCommandService.saveAccount(request.getUserId(),
-            passwordEncrypt(request.getPassword()), request.getNickname());
+        accountCommandService.saveAccount(
+            request.getUserId(),
+            passwordEncrypt(request.getPassword()),
+            request.getNickname()
+        );
     }
 
     public String signIn(SignInCommand request) {
-        Account account = accountQueryService.signIn(request.getUserId(),
-            passwordEncrypt(request.getPassword()));
+        Account account = accountQueryService.signIn(
+            request.getUserId(),
+            passwordEncrypt(request.getPassword())
+        );
         return JWTProvider.generateToken(account);
     }
 
