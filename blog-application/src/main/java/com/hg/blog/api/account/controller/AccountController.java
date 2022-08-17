@@ -23,7 +23,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping("/sign-up")
-    public Response signUp(@Valid @RequestBody SignUpCommand request) {
+    public Response<Void> signUp(@Valid @RequestBody SignUpCommand request) {
         accountService.signUp(request);
         return Response.ok();
     }
