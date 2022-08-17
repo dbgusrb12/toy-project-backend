@@ -11,7 +11,7 @@ public class PostDto {
     @AllArgsConstructor
     public static class PostCreateCommand {
 
-        @NotBlank(message = "title 은 비어있을 수 없습니다.")
+        @NotBlank(message = "필수 값입니다.")
         private String title;
         private String content;
 
@@ -21,9 +21,9 @@ public class PostDto {
     @AllArgsConstructor
     public static class PostUpdateCommand {
 
-        @NotBlank(message = "title 은 비어있을 수 없습니다.")
+        @NotBlank(message = "필수 값입니다.")
         private String title;
-        @NotBlank(message = "content 는 비어있을 수 없습니다.")
+        @NotBlank(message = "필수 값입니다.")
         private String content;
     }
 
