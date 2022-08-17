@@ -41,7 +41,7 @@ public class SHA256Util {
     }
 
     private static String bytesToHex(byte[] hashValue) {
-        StringBuffer hexString = new StringBuffer();
+        StringBuilder hexString = new StringBuilder();
         for (byte hashByte : hashValue) {
             String hex = Integer.toHexString(hashByte & 0xFF);
             if (hex.length() == 1) {
