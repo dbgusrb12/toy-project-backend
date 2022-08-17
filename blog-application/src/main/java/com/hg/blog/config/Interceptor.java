@@ -1,7 +1,7 @@
 package com.hg.blog.config;
 
-import static com.hg.blog.constants.Constants.AUTH_HEADER;
 import static com.hg.blog.constants.Constants.USER_ID;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import com.hg.blog.annotation.Permit;
 import com.hg.blog.annotation.Role;
@@ -45,7 +45,7 @@ public class Interceptor implements HandlerInterceptor {
             return true;
         }
 
-        String token = request.getHeader(AUTH_HEADER);
+        String token = request.getHeader(AUTHORIZATION);
         checkTokenValidate(token);
         request.setAttribute(USER_ID, JWTProvider.getUserIdFromJWT(token));
         return true;

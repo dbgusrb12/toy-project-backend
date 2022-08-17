@@ -1,5 +1,13 @@
 package com.hg.blog.config;
 
+import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS;
+import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN;
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.OPTIONS;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -28,9 +36,9 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
             .allowedOriginPatterns("*")
-            .allowedMethods("GET", "OPTIONS", "POST", "PUT", "DELETE")
+            .allowedMethods(GET.name(), OPTIONS.name(), POST.name(), PUT.name(), DELETE.name())
             .allowedHeaders("*")
-            .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
+            .exposedHeaders(ACCESS_CONTROL_ALLOW_ORIGIN, ACCESS_CONTROL_ALLOW_CREDENTIALS)
             .allowCredentials(true).maxAge(10);
     }
 }

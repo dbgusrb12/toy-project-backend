@@ -1,7 +1,6 @@
 package com.hg.blog.api.post.controller;
 
 import static com.hg.blog.constants.Constants.API_PREFIX;
-import static com.hg.blog.constants.Constants.AUTH_HEADER;
 import static com.hg.blog.constants.Constants.POST_API;
 import static com.hg.blog.constants.Constants.TOKEN_TYPE;
 import static org.hamcrest.Matchers.is;
@@ -9,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -59,7 +59,7 @@ public class PostControllerTest {
         mockMvc.perform(post(API_PREFIX + POST_API)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
-                .header(AUTH_HEADER, TOKEN_TYPE + " " + token)
+                .header(AUTHORIZATION, TOKEN_TYPE + " " + token)
                 .content(getBody(request)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.body", is(1)));
@@ -87,7 +87,7 @@ public class PostControllerTest {
         mockMvc.perform(post(API_PREFIX + POST_API)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
-                .header(AUTH_HEADER, TOKEN_TYPE + " " + token)
+                .header(AUTHORIZATION, TOKEN_TYPE + " " + token)
                 .content(getBody(request)))
             .andExpect(status().is4xxClientError());
     }
@@ -104,7 +104,7 @@ public class PostControllerTest {
         mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
-                .header(AUTH_HEADER, TOKEN_TYPE + " " + token)
+                .header(AUTHORIZATION, TOKEN_TYPE + " " + token)
                 .content(getBody(request)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.body", is(1)));
@@ -134,7 +134,7 @@ public class PostControllerTest {
         mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
-                .header(AUTH_HEADER, TOKEN_TYPE + " " + token)
+                .header(AUTHORIZATION, TOKEN_TYPE + " " + token)
                 .content(getBody(request)))
             .andExpect(status().is4xxClientError());
     }
@@ -151,7 +151,7 @@ public class PostControllerTest {
         mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
-                .header(AUTH_HEADER, TOKEN_TYPE + " " + token)
+                .header(AUTHORIZATION, TOKEN_TYPE + " " + token)
                 .content(getBody(request)))
             .andExpect(status().is4xxClientError());
     }
@@ -166,7 +166,7 @@ public class PostControllerTest {
         mockMvc.perform(delete(API_PREFIX + POST_API + "/{postId}", postId)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
-                .header(AUTH_HEADER, TOKEN_TYPE + " " + token))
+                .header(AUTHORIZATION, TOKEN_TYPE + " " + token))
             .andExpect(status().isOk());
     }
 
