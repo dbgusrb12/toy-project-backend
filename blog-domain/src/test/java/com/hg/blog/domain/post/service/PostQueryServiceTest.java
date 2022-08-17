@@ -57,8 +57,7 @@ public class PostQueryServiceTest {
     }
 
     private Account createAccount() {
-        String userId = "userId";
-        return Account.of(userId, "password", "nickname");
+        return Account.of("userId", "password", "nickname");
     }
 
     private Post createPost(Account account) {

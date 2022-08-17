@@ -53,6 +53,7 @@ public class PostCommandServiceTest {
         long postId = 1;
         given(postRepository.findById(postId))
             .willReturn(Optional.of(post));
+
         String updateTitle = "postUpdate";
         String updateContent = "content 수정";
         post.update(updateTitle, updateContent);
@@ -77,8 +78,12 @@ public class PostCommandServiceTest {
         String updateContent = "content 수정";
 
         // when
-        Executable execute = () -> postCommandService.updatePost(account, postId, updateTitle,
-            updateContent);
+        Executable execute = () -> postCommandService.updatePost(
+            account,
+            postId,
+            updateTitle,
+            updateContent
+        );
 
         // then
         assertThrows(IllegalArgumentException.class, execute);
@@ -97,8 +102,12 @@ public class PostCommandServiceTest {
 
         // when
         Account otherAccount = createAccount();
-        Executable execute = () -> postCommandService.updatePost(otherAccount, postId, updateTitle,
-            updateContent);
+        Executable execute = () -> postCommandService.updatePost(
+            otherAccount,
+            postId,
+            updateTitle,
+            updateContent
+        );
 
         // then
         assertThrows(AccessControlException.class, execute);

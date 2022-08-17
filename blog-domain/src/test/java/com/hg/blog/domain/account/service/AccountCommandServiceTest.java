@@ -28,11 +28,15 @@ public class AccountCommandServiceTest {
     public void saveAccountTest() {
         // given
         Account account = createAccount();
-        given(accountRepository.save(any())).willReturn(account);
+        given(accountRepository.save(any()))
+            .willReturn(account);
 
         // when
-        Account savedAccount = accountCommandService.saveAccount(account.getUserId(),
-            account.getPassword(), account.getNickname());
+        Account savedAccount = accountCommandService.saveAccount(
+            account.getUserId(),
+            account.getPassword(),
+            account.getNickname()
+        );
 
         // then
         assertThat(savedAccount).isNotNull();
@@ -45,11 +49,15 @@ public class AccountCommandServiceTest {
     public void saveAccountExistErrorTest() {
         // given
         Account account = createAccount();
-        given(accountRepository.findByUserId(account.getUserId())).willReturn(Optional.of(account));
+        given(accountRepository.findByUserId(account.getUserId()))
+            .willReturn(Optional.of(account));
 
         // when
-        Executable execute = () -> accountCommandService.saveAccount(account.getUserId(),
-            account.getPassword(), account.getNickname());
+        Executable execute = () -> accountCommandService.saveAccount(
+            account.getUserId(),
+            account.getPassword(),
+            account.getNickname()
+        );
 
         // then
         assertThrows(IllegalArgumentException.class, execute);

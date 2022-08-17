@@ -45,8 +45,10 @@ public class AccountQueryServiceTest {
         Account account = createAccount();
 
         // when
-        Executable execute = () -> accountQueryService.signIn(account.getUserId(),
-            account.getPassword());
+        Executable execute = () -> accountQueryService.signIn(
+            account.getUserId(),
+            account.getPassword()
+        );
 
         // then
         assertThrows(IllegalArgumentException.class, execute);

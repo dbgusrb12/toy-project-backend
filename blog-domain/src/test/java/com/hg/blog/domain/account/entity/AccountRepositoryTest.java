@@ -45,7 +45,6 @@ public class AccountRepositoryTest {
 
     private Account saveAccount() {
         Account account = Account.of("userId", "password", "nickname");
-        Account savedAccount = accountRepository.save(account);
-        return savedAccount;
+        return accountRepository.save(account);
     }
 }
