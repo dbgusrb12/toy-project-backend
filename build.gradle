@@ -25,6 +25,9 @@ subprojects {
             extendsFrom annotationProcessor
         }
     }
+    ext {
+        springCloudVersion = '2021.0.3'
+    }
 
     repositories {
         mavenCentral()
@@ -37,6 +40,12 @@ subprojects {
 
     tasks.named('test') {
         useJUnitPlatform()
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
     }
 }
 
