@@ -24,8 +24,6 @@ class CommentRepositoryTest {
 
     @Autowired
     private CommentRepository commentRepository;
-
-    private final String title = "post";
     private final String content = "content";
 
     @Test
@@ -104,7 +102,7 @@ class CommentRepositoryTest {
     }
 
     private Post savePost(Account account) {
-        Post post = Post.of(account, title, content);
+        Post post = Post.of(account, "post", content);
         return postRepository.save(post);
     }
 

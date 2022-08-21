@@ -33,9 +33,7 @@ class CommentQueryServiceTest {
     @Autowired
     private CommentQueryService commentQueryService;
 
-    private final String title = "post";
     private final String content = "content";
-
     private long commentId;
     private long childCommentId;
     private long lastCommentId;
@@ -81,7 +79,7 @@ class CommentQueryServiceTest {
     }
 
     private Post savePost(Account account) {
-        Post post = Post.of(account, title, content);
+        Post post = Post.of(account, "post", "content");
         return postRepository.save(post);
     }
 
