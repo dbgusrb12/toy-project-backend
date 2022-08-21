@@ -9,5 +9,5 @@ public enum NaverSort {
     SIM("sim"),
     DATE("date");
 
-    private String sort;
+    private final String sort;
 }
