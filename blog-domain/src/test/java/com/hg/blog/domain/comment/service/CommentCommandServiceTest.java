@@ -79,11 +79,11 @@ class CommentCommandServiceTest {
         String updateContent = "update content";
 
         // when
-        Comment updateComment = commentCommandService.updateComment(account, comment.getId(), updateContent);
+        Comment updatedComment = commentCommandService.updateComment(account, comment.getId(), updateContent);
 
         // then
-        assertThat(updateComment).isNotNull();
-        assertThat(updateComment.getContent()).isEqualTo(updateContent);
+        assertThat(updatedComment).isNotNull();
+        assertThat(updatedComment.getContent()).isEqualTo(updateContent);
     }
 
     @Test
@@ -128,9 +128,9 @@ class CommentCommandServiceTest {
         commentCommandService.deleteComment(account, comment.getId());
 
         // then
-        Optional<Comment> deleteComment = commentRepository.findById(comment.getId());
-        assertThat(deleteComment.isPresent()).isTrue();
-        assertThat(deleteComment.get().isDeleted()).isTrue();
+        Optional<Comment> deletedComment = commentRepository.findById(comment.getId());
+        assertThat(deletedComment.isPresent()).isTrue();
+        assertThat(deletedComment.get().isDeleted()).isTrue();
     }
 
     @Test

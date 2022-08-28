@@ -2,38 +2,39 @@ package com.hg.blog.domain.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 import com.hg.blog.domain.account.entity.Account;
+import com.hg.blog.domain.account.entity.AccountRepository;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.entity.PostRepository;
 import java.security.AccessControlException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
-@ExtendWith(MockitoExtension.class)
+@DataJpaTest
+@Import(PostCommandService.class)
+@ActiveProfiles({"blog-domain", "local"})
 public class PostCommandServiceTest {
 
-    @Mock
+    @Autowired
     private PostRepository postRepository;
-    @InjectMocks
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
     private PostCommandService postCommandService;
+    private final String userId = "userId";
     private final String title = "post";
     private final String content = "content";
 
     @Test
     public void savePostTest() {
         // given
-        Account account = createAccount();
-        given(postRepository.save(any()))
-            .willReturn(createPost(account));
+        Account account = createAccount(userId);
 
         // when
         Post post = postCommandService.savePost(account, title, content);
@@ -48,20 +49,14 @@ public class PostCommandServiceTest {
     @Test
     public void updatePostTest() {
         // given
-        Account account = createAccount();
-        Post post = createPost(account);
-        long postId = 1;
-        given(postRepository.findById(postId))
-            .willReturn(Optional.of(post));
+        Account account = createAccount(userId);
+        Post post = postCommandService.savePost(account, title, content);
 
         String updateTitle = "postUpdate";
         String updateContent = "content 수정";
-        post.update(updateTitle, updateContent);
-        given(postRepository.save(any()))
-            .willReturn(post);
 
         // when
-        Post result = postCommandService.updatePost(account, postId, updateTitle, updateContent);
+        Post result = postCommandService.updatePost(account, post.getId(), updateTitle, updateContent);
 
         // then
         assertThat(result).isNotNull();
@@ -72,18 +67,13 @@ public class PostCommandServiceTest {
     @Test
     public void updatePostNotExistPostErrorTest() {
         // given
-        Account account = createAccount();
+        Account account = createAccount(userId);
         long postId = 1;
         String updateTitle = "postUpdate";
         String updateContent = "content 수정";
 
         // when
-        Executable execute = () -> postCommandService.updatePost(
-            account,
-            postId,
-            updateTitle,
-            updateContent
-        );
+        Executable execute = () -> postCommandService.updatePost(account, postId, updateTitle, updateContent);
 
         // then
         assertThrows(IllegalArgumentException.class, execute);
@@ -92,19 +82,16 @@ public class PostCommandServiceTest {
     @Test
     public void updatePostNotOwnerErrorTest() {
         // given
-        Account account = createAccount();
-        Post post = createPost(account);
-        long postId = 1;
-        given(postRepository.findById(postId))
-            .willReturn(Optional.of(post));
+        Account account = createAccount(userId);
+        Post post = postCommandService.savePost(account, title, content);
         String updateTitle = "postUpdate";
         String updateContent = "content 수정";
 
         // when
-        Account otherAccount = Account.of("userId2", "password2", "nickname2");
+        Account otherAccount = createAccount("otherUserId");
         Executable execute = () -> postCommandService.updatePost(
             otherAccount,
-            postId,
+            post.getId(),
             updateTitle,
             updateContent
         );
@@ -116,54 +103,49 @@ public class PostCommandServiceTest {
     @Test
     public void deletePostTest() {
         // given
-        Account account = createAccount();
-        Post post = createPost(account);
-        long postId = 1;
-        given(postRepository.findById(postId))
-            .willReturn(Optional.of(post));
+        Account account = createAccount(userId);
+        Post post = postCommandService.savePost(account, title, content);
 
         // when
-        postCommandService.deletePost(account, postId);
+        postCommandService.deletePost(account, post.getId());
 
         // then
-        verify(postRepository).save(any());
+        Optional<Post> deletedPost = postRepository.findById(post.getId());
+        assertThat(deletedPost.isPresent()).isTrue();
+        assertThat(deletedPost.get().isDeleted()).isTrue();
     }
 
     @Test
     public void deletePostNotExistPostErrorTest() {
         // given
-        Account account = createAccount();
+        Account account = createAccount(userId);
         long postId = 1;
 
         // when
         Executable execute = () -> postCommandService.deletePost(account, postId);
 
         // then
-        assertThrows(IllegalArgumentException.class, execute);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("존재하지 않는 게시글입니다.");
     }
 
     @Test
     public void deletePostNotOwnerErrorTest() {
         // given
-        Account account = createAccount();
-        Post post = createPost(account);
-        long postId = 1;
-        given(postRepository.findById(postId))
-            .willReturn(Optional.of(post));
+        Account account = createAccount(userId);
+        Post post = postCommandService.savePost(account, title, content);
 
         // when
-        Account otherAccount = Account.of("userId2", "password2", "nickname2");
-        Executable execute = () -> postCommandService.deletePost(otherAccount, postId);
+        Account otherAccount = createAccount("otherUserId");
+        Executable execute = () -> postCommandService.deletePost(otherAccount, post.getId());
 
         // then
-        assertThrows(AccessControlException.class, execute);
+        AccessControlException exception = assertThrows(AccessControlException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("권한이 없습니다.");
     }
 
-    private Account createAccount() {
-        return Account.of("userId", "password", "nickname");
-    }
-
-    private Post createPost(Account account) {
-        return Post.of(account, title, content);
+    private Account createAccount(String userId) {
+        Account account = Account.of(userId, "password", "nickname");
+        return accountRepository.save(account);
     }
 }
