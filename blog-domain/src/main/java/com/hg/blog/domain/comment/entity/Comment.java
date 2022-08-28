@@ -62,4 +62,9 @@ public class Comment {
         this.childComment.add(comment);
         comment.parentComment = this;
     }
+
+    public void update(String content) {
+        this.content = content;
+        this.updated = LocalDateTime.now();
+    }
 }
