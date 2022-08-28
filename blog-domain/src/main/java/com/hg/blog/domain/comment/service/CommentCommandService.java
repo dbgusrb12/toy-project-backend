@@ -22,8 +22,8 @@ public class CommentCommandService {
     }
 
     @Transactional
-    public Comment saveComment(Account owner, Post post, Comment parentComment, String content) {
-        Comment comment = Comment.of(owner, post, content);
+    public Comment saveChildComment(Account owner, Comment parentComment, String content) {
+        Comment comment = Comment.of(owner, parentComment.getPost(), content);
         parentComment.addComment(comment);
         return commentRepository.save(comment);
     }

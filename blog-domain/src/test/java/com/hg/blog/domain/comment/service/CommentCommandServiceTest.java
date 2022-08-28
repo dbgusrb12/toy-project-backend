@@ -61,7 +61,7 @@ class CommentCommandServiceTest {
         Comment comment = commentCommandService.saveComment(account, post, content);
 
         // when
-        Comment childComment = commentCommandService.saveComment(account, post, comment, content);
+        Comment childComment = commentCommandService.saveChildComment(account, comment, content);
 
         // then
         assertThat(childComment).isNotNull();
