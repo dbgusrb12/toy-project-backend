@@ -2,33 +2,31 @@ package com.hg.blog.domain.account.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
 
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.entity.AccountRepository;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
-@ExtendWith(MockitoExtension.class)
+@DataJpaTest
+@Import(AccountQueryService.class)
+@ActiveProfiles({"blog-domain", "local"})
 public class AccountQueryServiceTest {
 
-    @Mock
+    @Autowired
     private AccountRepository accountRepository;
 
-    @InjectMocks
+    @Autowired
     private AccountQueryService accountQueryService;
 
     @Test
     public void signInTest() {
         // given
-        Account account = createAccount();
-        given(accountRepository.findByUserIdAndPassword(account.getUserId(), account.getPassword()))
-            .willReturn(Optional.of(account));
+        Account account = saveAccount();
 
         // when
         Account signInUser = accountQueryService.signIn(account.getUserId(), account.getPassword());
@@ -40,48 +38,46 @@ public class AccountQueryServiceTest {
     }
 
     @Test
-    public void signInErrorTest() {
+    public void signInTest_유저가_존재하지_않을_경우_에러() {
         // given
-        Account account = createAccount();
+        String userId = "userId";
+        String password = "password";
 
         // when
-        Executable execute = () -> accountQueryService.signIn(
-            account.getUserId(),
-            account.getPassword()
-        );
+        Executable execute = () -> accountQueryService.signIn(userId, password);
 
         // then
-        assertThrows(IllegalArgumentException.class, execute);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("존재하지 않는 유저입니다.");
     }
 
     @Test
     public void getAccountByUserIdTest() {
         // given
-        Account account = createAccount();
-        String userId = "userId";
-        given(accountRepository.findByUserId(userId))
-            .willReturn(Optional.of(account));
+        Account account = saveAccount();
 
         // when
-        Account findAccount = accountQueryService.getAccountByUserId(userId);
+        Account findAccount = accountQueryService.getAccountByUserId(account.getUserId());
 
         // then
         assertThat(findAccount).isNotNull();
-        assertThat(findAccount.getUserId()).isEqualTo(userId);
+        assertThat(findAccount.getUserId()).isEqualTo("userId");
         assertThat(findAccount.getPassword()).isEqualTo("password");
         assertThat(findAccount.getNickname()).isEqualTo("nickname");
     }
 
     @Test
-    public void getAccountByUserIdErrorTest() {
+    public void getAccountByUserIdTest_유저가_존재하지_않을_경우_에러() {
         // given, when
         Executable execute = () -> accountQueryService.getAccountByUserId("userId");
 
         // then
-        assertThrows(IllegalArgumentException.class, execute);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("존재하지 않는 유저입니다.");
     }
 
-    private Account createAccount() {
-        return Account.of("userId", "password", "nickname");
+    private Account saveAccount() {
+        Account account = Account.of("userId", "password", "nickname");
+        return accountRepository.save(account);
     }
 }

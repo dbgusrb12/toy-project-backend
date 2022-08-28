@@ -2,41 +2,35 @@ package com.hg.blog.domain.account.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.entity.AccountRepository;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
-@ExtendWith(MockitoExtension.class)
+@DataJpaTest
+@Import(AccountCommandService.class)
+@ActiveProfiles({"blog-domain", "local"})
 public class AccountCommandServiceTest {
 
-    @Mock
+    @Autowired
     private AccountRepository accountRepository;
-
-    @InjectMocks
+    @Autowired
     private AccountCommandService accountCommandService;
 
     @Test
     public void saveAccountTest() {
         // given
-        Account account = createAccount();
-        given(accountRepository.save(any()))
-            .willReturn(account);
+        String userId = "userId";
+        String password = "password";
+        String nickname = "nickname";
 
         // when
-        Account savedAccount = accountCommandService.saveAccount(
-            account.getUserId(),
-            account.getPassword(),
-            account.getNickname()
-        );
+        Account savedAccount = accountCommandService.saveAccount(userId, password, nickname);
 
         // then
         assertThat(savedAccount).isNotNull();
@@ -46,24 +40,23 @@ public class AccountCommandServiceTest {
     }
 
     @Test
-    public void saveAccountExistErrorTest() {
+    public void saveAccountTest_아이디가_이미_존재할_경우_에러() {
         // given
-        Account account = createAccount();
-        given(accountRepository.findByUserId(account.getUserId()))
-            .willReturn(Optional.of(account));
+        String userId = "userId";
+        String password = "password";
+        String nickname = "nickname";
+        createAccount(userId);
 
         // when
-        Executable execute = () -> accountCommandService.saveAccount(
-            account.getUserId(),
-            account.getPassword(),
-            account.getNickname()
-        );
+        Executable execute = () -> accountCommandService.saveAccount(userId, password, nickname);
 
         // then
-        assertThrows(IllegalArgumentException.class, execute);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("이미 존재하는 ID 입니다.");
     }
 
-    private Account createAccount() {
-        return Account.of("userId", "password", "nickname");
+    private Account createAccount(String userId) {
+        Account account = Account.of(userId, "password", "nickname");
+        return accountRepository.save(account);
     }
 }
