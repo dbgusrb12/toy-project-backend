@@ -50,12 +50,14 @@ public class PostControllerTest {
 
     @Test
     public void savePostTest() throws Exception {
+        // given
         PostCreateCommand request = new PostCreateCommand("post1", "content");
         Account account = Account.of("userId", "password", "nickname");
         String token = JWTProvider.generateToken(account);
         given(postService.savePost(eq("userId"), any()))
             .willReturn(1L);
 
+        // when, then
         mockMvc.perform(post(API_PREFIX + POST_API)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -67,8 +69,10 @@ public class PostControllerTest {
 
     @Test
     public void savePostAuthErrorTest() throws Exception {
+        // given
         PostCreateCommand request = new PostCreateCommand("post1", "content");
 
+        // when, then
         mockMvc.perform(post(API_PREFIX + POST_API)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -78,12 +82,14 @@ public class PostControllerTest {
 
     @Test
     public void savePostNotExistTitleErrorTest() throws Exception {
+        // given
         PostCreateCommand request = new PostCreateCommand(null, "content");
         Account account = Account.of("userId", "password", "nickname");
         String token = JWTProvider.generateToken(account);
         given(postService.savePost(eq("userId"), any()))
             .willReturn(1L);
 
+        // when, then
         mockMvc.perform(post(API_PREFIX + POST_API)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -94,6 +100,7 @@ public class PostControllerTest {
 
     @Test
     public void updatePostTest() throws Exception {
+        // given
         PostUpdateCommand request = new PostUpdateCommand("title", "content");
         long postId = 1;
         Account account = Account.of("userId", "password", "nickname");
@@ -101,6 +108,7 @@ public class PostControllerTest {
         given(postService.updatePost(eq(postId), eq("userId"), any()))
             .willReturn(postId);
 
+        // when, then
         mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -112,9 +120,11 @@ public class PostControllerTest {
 
     @Test
     public void updatePostNotAuthErrorTest() throws Exception {
+        // given
         PostUpdateCommand request = new PostUpdateCommand("title", "content");
         long postId = 1;
 
+        // when, then
         mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -124,6 +134,7 @@ public class PostControllerTest {
 
     @Test
     public void updatePostNotExistTitleErrorTest() throws Exception {
+        // given
         PostUpdateCommand request = new PostUpdateCommand(null, "content");
         long postId = 1;
         Account account = Account.of("userId", "password", "nickname");
@@ -131,6 +142,7 @@ public class PostControllerTest {
         given(postService.updatePost(eq(postId), eq("userId"), any()))
             .willReturn(postId);
 
+        // when, then
         mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -141,6 +153,7 @@ public class PostControllerTest {
 
     @Test
     public void updatePostNotExistContentErrorTest() throws Exception {
+        // given
         PostUpdateCommand request = new PostUpdateCommand("title", null);
         long postId = 1;
         Account account = Account.of("userId", "password", "nickname");
@@ -148,6 +161,7 @@ public class PostControllerTest {
         given(postService.updatePost(eq(postId), eq("userId"), any()))
             .willReturn(postId);
 
+        // when, then
         mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -158,11 +172,13 @@ public class PostControllerTest {
 
     @Test
     public void deletePostTest() throws Exception {
+        // given
         long postId = 1;
         Account account = Account.of("userId", "password", "nickname");
         String token = JWTProvider.generateToken(account);
         willDoNothing().given(postService).deletePost(postId, "userId");
 
+        // when, then
         mockMvc.perform(delete(API_PREFIX + POST_API + "/{postId}", postId)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -172,7 +188,10 @@ public class PostControllerTest {
 
     @Test
     public void deletePostNotAuthTest() throws Exception {
+        // given
         long postId = 1;
+
+        // when, then
         mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE))
@@ -181,11 +200,13 @@ public class PostControllerTest {
 
     @Test
     public void getPostTest() throws Exception {
+        // given
         long postId = 1;
-        GetPost getPost = GetPost.of(1, "title", "content", "nickname", LocalDateTime.now(),
-            LocalDateTime.now());
+        GetPost getPost = GetPost.of(1, "title", "content", "nickname", LocalDateTime.now(), LocalDateTime.now());
         given(postService.getPost(postId))
             .willReturn(getPost);
+
+        // when, then
         mockMvc.perform(get(API_PREFIX + POST_API + "/{postId}", postId)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE))

@@ -61,14 +61,8 @@ public class PostServiceTest {
         PostUpdateCommand command = createPostUpdateCommand();
         given(accountQueryService.getAccountByUserId(userId))
             .willReturn(account);
-        given(
-            postCommandService.updatePost(
-                account,
-                postId,
-                command.getTitle(),
-                command.getContent()
-            )
-        ).willReturn(post);
+        given(postCommandService.updatePost(account, postId, command.getTitle(), command.getContent()))
+            .willReturn(post);
 
         // when
         long id = postService.updatePost(postId, userId, command);

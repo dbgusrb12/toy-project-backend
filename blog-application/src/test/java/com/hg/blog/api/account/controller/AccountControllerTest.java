@@ -41,8 +41,10 @@ public class AccountControllerTest {
 
     @Test
     public void signUpTest() throws Exception {
+        // given
         SignUpCommand request = new SignUpCommand("userId", "password", "nickname");
 
+        // when, then
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -52,8 +54,10 @@ public class AccountControllerTest {
 
     @Test
     public void signUpNotUserIdError() throws Exception {
+        // given
         SignUpCommand request = new SignUpCommand(null, "password", "nickname");
 
+        // when, then
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -63,8 +67,10 @@ public class AccountControllerTest {
 
     @Test
     public void signUpNotPasswordError() throws Exception {
+        // given
         SignUpCommand request = new SignUpCommand("userId", null, "nickname");
 
+        // when, then
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -74,8 +80,10 @@ public class AccountControllerTest {
 
     @Test
     public void signUpNotNicknameError() throws Exception {
+        // given
         SignUpCommand request = new SignUpCommand("userId", "password", null);
 
+        // when, then
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-up")
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -85,10 +93,12 @@ public class AccountControllerTest {
 
     @Test
     public void signInTest() throws Exception {
+        // given
         SignInCommand request = new SignInCommand("userId", "password");
         given(accountService.signIn(any()))
             .willReturn("jwtTokenValue");
 
+        // when, then
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-in")
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -99,8 +109,10 @@ public class AccountControllerTest {
 
     @Test
     public void signInNotUserIdErrorTest() throws Exception {
+        // given
         SignInCommand request = new SignInCommand(null, "password");
 
+        // when, then
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-in")
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -110,8 +122,10 @@ public class AccountControllerTest {
 
     @Test
     public void signInNotPasswordErrorTest() throws Exception {
+        // given
         SignInCommand request = new SignInCommand("userId", null);
 
+        // when, then
         mockMvc.perform(post(API_PREFIX + ACCOUNT_API + "/sign-in")
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
@@ -121,8 +135,11 @@ public class AccountControllerTest {
 
     @Test
     public void getRsaPublicKeyTest() throws Exception {
+        // given
         given(accountService.getRsaPublicKey())
             .willReturn("rsaPublicKey");
+
+        // when, then
         mockMvc.perform(get(API_PREFIX + ACCOUNT_API + "/rsa-key")
                 .content(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE))
