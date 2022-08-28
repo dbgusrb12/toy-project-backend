@@ -10,6 +10,7 @@ import com.hg.blog.domain.comment.entity.CommentRepository;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.entity.PostRepository;
 import java.security.AccessControlException;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,6 @@ class CommentCommandServiceTest {
 
     @Autowired
     private CommentRepository commentRepository;
-
     @Autowired
     private CommentCommandService commentCommandService;
 
@@ -111,6 +111,51 @@ class CommentCommandServiceTest {
 
         // when
         Executable execute = () -> commentCommandService.updateComment(otherAccount, comment.getId(), updateContent);
+
+        // then
+        AccessControlException exception = assertThrows(AccessControlException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("권한이 없습니다.");
+    }
+
+    @Test
+    public void deleteCommentTest() {
+        // given
+        Account account = saveAccount(userId);
+        Post post = savePost(account);
+        Comment comment = commentCommandService.saveComment(account, post, content);
+
+        // when
+        commentCommandService.deleteComment(account, comment.getId());
+
+        // then
+        Optional<Comment> deleteComment = commentRepository.findById(comment.getId());
+        assertThat(deleteComment.isPresent()).isTrue();
+        assertThat(deleteComment.get().isDeleted()).isTrue();
+    }
+
+    @Test
+    public void deleteCommentTest_댓글이_존재하지_않을_때_에러() {
+        // given
+        Account account = saveAccount(userId);
+
+        // when
+        Executable execute = () -> commentCommandService.deleteComment(account, 1L);
+
+        // then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("존재하지 않는 댓글입니다.");
+    }
+
+    @Test
+    public void deleteCommentTest_작성자가_아닐_경우_에러() {
+        // given
+        Account account = saveAccount(userId);
+        Post post = savePost(account);
+        Comment comment = commentCommandService.saveComment(account, post, content);
+        Account otherAccount = saveAccount("otherUserId");
+
+        // when
+        Executable execute = () -> commentCommandService.deleteComment(otherAccount, comment.getId());
 
         // then
         AccessControlException exception = assertThrows(AccessControlException.class, execute);

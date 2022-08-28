@@ -37,6 +37,15 @@ public class CommentCommandService {
         return commentRepository.save(comment);
     }
 
+    @Transactional
+    public void deleteComment(Account owner, long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+        checkUpdatePermission(owner, comment);
+        comment.delete();
+        commentRepository.save(comment);
+    }
+
     private void checkUpdatePermission(Account account, Comment comment) {
         if (!account.equals(comment.getAccount())) {
             throw new AccessControlException("권한이 없습니다.");
