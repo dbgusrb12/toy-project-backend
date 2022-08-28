@@ -52,7 +52,7 @@ public class PostQueryServiceTest {
     }
 
     @Test
-    public void getPostNotExistError() {
+    public void getPostTest_게시글이_존재하지_않을_경우_에러() {
         // given
         long postId = 0;
 

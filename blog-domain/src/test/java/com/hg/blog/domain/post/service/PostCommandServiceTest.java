@@ -34,7 +34,7 @@ public class PostCommandServiceTest {
     @Test
     public void savePostTest() {
         // given
-        Account account = createAccount(userId);
+        Account account = saveAccount(userId);
 
         // when
         Post post = postCommandService.savePost(account, title, content);
@@ -49,7 +49,7 @@ public class PostCommandServiceTest {
     @Test
     public void updatePostTest() {
         // given
-        Account account = createAccount(userId);
+        Account account = saveAccount(userId);
         Post post = postCommandService.savePost(account, title, content);
 
         String updateTitle = "postUpdate";
@@ -65,9 +65,9 @@ public class PostCommandServiceTest {
     }
 
     @Test
-    public void updatePostNotExistPostErrorTest() {
+    public void updatePostTest_게시글이_존재하지_않을_경우_에러() {
         // given
-        Account account = createAccount(userId);
+        Account account = saveAccount(userId);
         long postId = 1;
         String updateTitle = "postUpdate";
         String updateContent = "content 수정";
@@ -76,19 +76,20 @@ public class PostCommandServiceTest {
         Executable execute = () -> postCommandService.updatePost(account, postId, updateTitle, updateContent);
 
         // then
-        assertThrows(IllegalArgumentException.class, execute);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("존재하지 않는 게시글입니다.");
     }
 
     @Test
-    public void updatePostNotOwnerErrorTest() {
+    public void updatePostTest_작성자가_아닐_경우_에러() {
         // given
-        Account account = createAccount(userId);
+        Account account = saveAccount(userId);
         Post post = postCommandService.savePost(account, title, content);
         String updateTitle = "postUpdate";
         String updateContent = "content 수정";
 
         // when
-        Account otherAccount = createAccount("otherUserId");
+        Account otherAccount = saveAccount("otherUserId");
         Executable execute = () -> postCommandService.updatePost(
             otherAccount,
             post.getId(),
@@ -97,13 +98,14 @@ public class PostCommandServiceTest {
         );
 
         // then
-        assertThrows(AccessControlException.class, execute);
+        AccessControlException exception = assertThrows(AccessControlException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("권한이 없습니다.");
     }
 
     @Test
     public void deletePostTest() {
         // given
-        Account account = createAccount(userId);
+        Account account = saveAccount(userId);
         Post post = postCommandService.savePost(account, title, content);
 
         // when
@@ -116,9 +118,9 @@ public class PostCommandServiceTest {
     }
 
     @Test
-    public void deletePostNotExistPostErrorTest() {
+    public void deletePostTest_게시글이_존재하지_않을_경우_에러() {
         // given
-        Account account = createAccount(userId);
+        Account account = saveAccount(userId);
         long postId = 1;
 
         // when
@@ -130,13 +132,13 @@ public class PostCommandServiceTest {
     }
 
     @Test
-    public void deletePostNotOwnerErrorTest() {
+    public void deletePostTest_작성자가_아닐_경우_에러() {
         // given
-        Account account = createAccount(userId);
+        Account account = saveAccount(userId);
         Post post = postCommandService.savePost(account, title, content);
 
         // when
-        Account otherAccount = createAccount("otherUserId");
+        Account otherAccount = saveAccount("otherUserId");
         Executable execute = () -> postCommandService.deletePost(otherAccount, post.getId());
 
         // then
@@ -144,7 +146,7 @@ public class PostCommandServiceTest {
         assertThat(exception.getMessage()).isEqualTo("권한이 없습니다.");
     }
 
-    private Account createAccount(String userId) {
+    private Account saveAccount(String userId) {
         Account account = Account.of(userId, "password", "nickname");
         return accountRepository.save(account);
     }
