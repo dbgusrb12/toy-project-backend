@@ -10,6 +10,7 @@ import com.hg.blog.api.comment.service.CommentService;
 import com.hg.blog.response.Response;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -42,5 +43,12 @@ public class CommentController {
         @Valid @RequestBody CommentDto.CommentUpdateCommand command
     ) {
         return Response.of(commentService.updateComment(commentId, userId, command));
+    }
+
+    @DeleteMapping("/{commentId}")
+    @Permit(Role.USER)
+    public Response<Void> deleteComment(@PathVariable long commentId, @RequestAttribute String userId) {
+        commentService.deleteComment(commentId, userId);
+        return Response.ok();
     }
 }

@@ -20,15 +20,20 @@ public class CommentService {
     private final PostQueryService postQueryService;
 
     public long saveComment(String userId, CommentDto.CommentCreateCommand command) {
-        final Account account = accountQueryService.getAccountByUserId(userId);
+        final Account owner = accountQueryService.getAccountByUserId(userId);
         final Post post = postQueryService.getPost(command.getPostId());
-        final Comment comment = commentCommandService.saveComment(account, post, command.getContent());
+        final Comment comment = commentCommandService.saveComment(owner, post, command.getContent());
         return comment.getId();
     }
 
     public long updateComment(long commentId, String userId, CommentUpdateCommand command) {
-        final Account account = accountQueryService.getAccountByUserId(userId);
-        final Comment comment = commentCommandService.updateComment(account, commentId, command.getContent());
+        final Account owner = accountQueryService.getAccountByUserId(userId);
+        final Comment comment = commentCommandService.updateComment(owner, commentId, command.getContent());
         return comment.getId();
+    }
+
+    public void deleteComment(long commentId, String userId) {
+        final Account owner = accountQueryService.getAccountByUserId(userId);
+        commentCommandService.deleteComment(owner, commentId);
     }
 }
