@@ -21,22 +21,13 @@ public class PostService {
 
     public long savePost(String userId, PostCreateCommand request) {
         final Account owner = accountQueryService.getAccountByUserId(userId);
-        final Post post = postCommandService.savePost(
-            owner,
-            request.getTitle(),
-            request.getContent()
-        );
+        final Post post = postCommandService.savePost(owner, request.getTitle(), request.getContent());
         return post.getId();
     }
 
     public long updatePost(long postId, String userId, PostUpdateCommand command) {
         final Account owner = accountQueryService.getAccountByUserId(userId);
-        final Post post = postCommandService.updatePost(
-            owner,
-            postId,
-            command.getTitle(),
-            command.getContent()
-        );
+        final Post post = postCommandService.updatePost(owner, postId, command.getTitle(), command.getContent());
         return post.getId();
     }
 
