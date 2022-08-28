@@ -2,66 +2,76 @@ package com.hg.blog.domain.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
 
 import com.hg.blog.domain.account.entity.Account;
+import com.hg.blog.domain.account.entity.AccountRepository;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.entity.PostRepository;
-import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
-@ExtendWith(MockitoExtension.class)
+@DataJpaTest
+@Import(PostQueryService.class)
+@ActiveProfiles({"blog-domain", "local"})
 public class PostQueryServiceTest {
 
-    @Mock
+    @Autowired
     private PostRepository postRepository;
-    @InjectMocks
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
     private PostQueryService postQueryService;
-    private final String title = "post";
-    private final String content = "content";
+    private long postId;
+    private Account account;
+
+    @BeforeEach
+    void setUp() {
+        Account account = saveAccount();
+        Post post = savePost(account);
+        this.account = account;
+        this.postId = post.getId();
+    }
 
     @Test
     public void getPostTest() {
-        // given
-        long postId = 1;
-        Account account = createAccount();
-        Post post = createPost(account);
-        given(postRepository.findByIdAndDeleted(postId, false))
-            .willReturn(Optional.of(post));
-
-        // when
+        // given, when
         Post getPost = postQueryService.getPost(postId);
 
         // then
         assertThat(getPost).isNotNull();
-        assertThat(getPost.getTitle()).isEqualTo(title);
-        assertThat(getPost.getContent()).isEqualTo(content);
+        assertThat(getPost.getTitle()).isEqualTo("post");
+        assertThat(getPost.getContent()).isEqualTo("content");
         assertThat(getPost.getAccount()).isEqualTo(account);
+        assertThat(getPost.getAccount().getUserId()).isEqualTo("userId");
+        assertThat(getPost.getAccount().getNickname()).isEqualTo("nickname");
     }
 
     @Test
     public void getPostNotExistError() {
         // given
-        long postId = 1;
+        long postId = 0;
 
         // when
         Executable execute = () -> postQueryService.getPost(postId);
 
         // then
-        assertThrows(IllegalArgumentException.class, execute);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("존재하지 않는 게시글입니다.");
     }
 
-    private Account createAccount() {
-        return Account.of("userId", "password", "nickname");
+    private Account saveAccount() {
+        Account account = Account.of("userId", "password", "nickname");
+        return accountRepository.save(account);
     }
 
-    private Post createPost(Account account) {
-        return Post.of(account, title, content);
+    private Post savePost(Account account) {
+        Post post = Post.of(account, "post", "content");
+        return postRepository.save(post);
     }
 
 }
