@@ -2,7 +2,6 @@ package com.hg.blog.api.comment.controller;
 
 import static com.hg.blog.constants.Constants.API_PREFIX;
 import static com.hg.blog.constants.Constants.COMMENT_API;
-import static com.hg.blog.constants.Constants.POST_API;
 import static com.hg.blog.constants.Constants.TOKEN_TYPE;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hg.blog.api.comment.dto.CommentDto.ChildCommentCreateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.CommentCreateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.CommentUpdateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.GetComment;
@@ -76,7 +76,7 @@ class CommentControllerTest {
         CommentCreateCommand request = new CommentCreateCommand(1L, "content");
 
         // when, then
-        mockMvc.perform(post(API_PREFIX + POST_API)
+        mockMvc.perform(post(API_PREFIX + COMMENT_API)
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE)
                 .content(getBody(request)))
@@ -218,6 +218,59 @@ class CommentControllerTest {
             .andExpect(jsonPath("$.body.id", is(1)))
             .andExpect(jsonPath("$.body.content", is("content")))
             .andExpect(jsonPath("$.body.nickname", is("nickname")))
+            .andDo(print());
+    }
+
+    @Test
+    public void saveChileCommentTest() throws Exception {
+        // given
+        long commentId = 1;
+        ChildCommentCreateCommand request = new ChildCommentCreateCommand("content");
+        Account account = Account.of("userId", "password", "nickname");
+        String token = JWTProvider.generateToken(account);
+        given(commentService.saveChildComment(eq(commentId), eq("userId"), any()))
+            .willReturn(1L);
+
+        // when, then
+        mockMvc.perform(post(API_PREFIX + COMMENT_API + "/{commentId}", commentId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE)
+                .header(AUTHORIZATION, TOKEN_TYPE + " " + token)
+                .content(getBody(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.body", is(1)))
+            .andDo(print());
+    }
+
+    @Test
+    public void saveChileCommentTest_토큰_없을_경우_에러() throws Exception {
+        // given
+        long commentId = 1;
+        ChildCommentCreateCommand request = new ChildCommentCreateCommand("content");
+
+        // when, then
+        mockMvc.perform(post(API_PREFIX + COMMENT_API + "/{commentId}", commentId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE)
+                .content(getBody(request)))
+            .andExpect(status().is4xxClientError())
+            .andDo(print());
+    }
+
+    @Test
+    public void saveChileCommentTest_content_없을_경우_에러() throws Exception {
+        // given
+        long commentId = 1;
+        ChildCommentCreateCommand request = new ChildCommentCreateCommand(null);
+        Account account = Account.of("userId", "password", "nickname");
+        String token = JWTProvider.generateToken(account);
+        // when, then
+        mockMvc.perform(post(API_PREFIX + COMMENT_API + "/{commentId}", commentId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE)
+                .content(getBody(request))
+                .header(AUTHORIZATION, TOKEN_TYPE + " " + token))
+            .andExpect(status().is4xxClientError())
             .andDo(print());
     }
 }

@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
 
+import com.hg.blog.api.comment.dto.CommentDto.ChildCommentCreateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.CommentCreateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.CommentUpdateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.GetComment;
@@ -229,6 +230,67 @@ class CommentServiceTest {
         // then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);
         assertThat(exception.getMessage()).isEqualTo("존재하지 않는 댓글입니다.");
+    }
+
+    @Test
+    public void saveChildCommentTest() {
+        // given
+        long commentId = 1;
+        ChildCommentCreateCommand command = createChildCommentCreateCommand();
+        Account account = createAccount();
+        Post post = createPost(account);
+        Comment comment = createComment(account, post);
+        Comment childComment = createComment(account, post);
+        given(accountQueryService.getAccountByUserId(userId))
+            .willReturn(account);
+        given(commentQueryService.getComment(commentId))
+            .willReturn(comment);
+        given(commentCommandService.saveChildComment(account, comment, command.getContent()))
+            .willReturn(childComment);
+
+        // when
+        long id = commentService.saveChildComment(commentId, userId, command);
+
+        // then
+        assertThat(id).isEqualTo(0);
+    }
+
+    @Test
+    public void saveChildCommentTest_유저가_존재하지_않을_경우_에러() {
+        // given
+        long commentId = 1;
+        ChildCommentCreateCommand command = createChildCommentCreateCommand();
+        given(accountQueryService.getAccountByUserId(userId))
+            .willThrow(new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+        // when
+        Executable execute = () -> commentService.saveChildComment(commentId, userId, command);
+
+        // then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("존재하지 않는 유저입니다.");
+    }
+
+    @Test
+    public void saveChildCommentTest_댓글이_존재하지_않을_경우_에러() {
+        // given
+        long commentId = 1;
+        ChildCommentCreateCommand command = createChildCommentCreateCommand();
+        Account account = createAccount();
+        given(accountQueryService.getAccountByUserId(userId))
+            .willReturn(account);
+        given(commentQueryService.getComment(commentId))
+            .willThrow(new IllegalArgumentException("존재하지 않는 댓글입니다."));
+        // when
+        Executable execute = () -> commentService.saveChildComment(commentId, userId, command);
+
+        // then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("존재하지 않는 댓글입니다.");
+    }
+
+    private ChildCommentCreateCommand createChildCommentCreateCommand() {
+        return new ChildCommentCreateCommand("comment content");
     }
 
     private CommentCreateCommand createCommentCreateCommand() {

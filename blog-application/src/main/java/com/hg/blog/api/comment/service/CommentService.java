@@ -1,6 +1,7 @@
 package com.hg.blog.api.comment.service;
 
-import com.hg.blog.api.comment.dto.CommentDto;
+import com.hg.blog.api.comment.dto.CommentDto.ChildCommentCreateCommand;
+import com.hg.blog.api.comment.dto.CommentDto.CommentCreateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.CommentUpdateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.GetComment;
 import com.hg.blog.domain.account.entity.Account;
@@ -22,7 +23,7 @@ public class CommentService {
     private final AccountQueryService accountQueryService;
     private final PostQueryService postQueryService;
 
-    public long saveComment(String userId, CommentDto.CommentCreateCommand command) {
+    public long saveComment(String userId, CommentCreateCommand command) {
         final Account owner = accountQueryService.getAccountByUserId(userId);
         final Post post = postQueryService.getPost(command.getPostId());
         final Comment comment = commentCommandService.saveComment(owner, post, command.getContent());
@@ -49,5 +50,12 @@ public class CommentService {
             comment.getCreated(),
             comment.getUpdated()
         );
+    }
+
+    public long saveChildComment(long commentId, String userId, ChildCommentCreateCommand command) {
+        final Account owner = accountQueryService.getAccountByUserId(userId);
+        final Comment parentComment = commentQueryService.getComment(commentId);
+        final Comment comment = commentCommandService.saveChildComment(owner, parentComment, command.getContent());
+        return comment.getId();
     }
 }

@@ -23,6 +23,15 @@ public class CommentDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class ChildCommentCreateCommand {
+
+        @NotBlank(message = "필수 값입니다.")
+        private String content;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class CommentUpdateCommand {
 
         @NotBlank(message = "필수 값입니다.")

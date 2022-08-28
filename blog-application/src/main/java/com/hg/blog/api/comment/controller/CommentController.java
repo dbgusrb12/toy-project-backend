@@ -57,4 +57,14 @@ public class CommentController {
     public Response<CommentDto.GetComment> getComment(@PathVariable long commentId) {
         return Response.of(commentService.getComment(commentId));
     }
+
+    @PostMapping("/{commentId}")
+    @Permit(Role.USER)
+    public Response<Long> saveChildComment(
+        @PathVariable long commentId,
+        @RequestAttribute String userId,
+        @Valid @RequestBody CommentDto.ChildCommentCreateCommand command
+    ) {
+        return Response.of(commentService.saveChildComment(commentId, userId, command));
+    }
 }
