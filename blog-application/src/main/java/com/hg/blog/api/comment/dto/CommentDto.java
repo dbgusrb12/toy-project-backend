@@ -9,12 +9,20 @@ import lombok.NoArgsConstructor;
 public class CommentDto {
 
     @Getter
-    @NoArgsConstructor
     @AllArgsConstructor
     public static class CommentCreateCommand {
 
         @NotNull(message = "필수 값입니다.")
         private Long postId;
+
+        @NotBlank(message = "필수 값입니다.")
+        private String content;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CommentUpdateCommand {
 
         @NotBlank(message = "필수 값입니다.")
         private String content;

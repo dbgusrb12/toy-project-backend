@@ -1,6 +1,7 @@
 package com.hg.blog.api.comment.service;
 
 import com.hg.blog.api.comment.dto.CommentDto;
+import com.hg.blog.api.comment.dto.CommentDto.CommentUpdateCommand;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountQueryService;
 import com.hg.blog.domain.comment.entity.Comment;
@@ -22,6 +23,12 @@ public class CommentService {
         final Account account = accountQueryService.getAccountByUserId(userId);
         final Post post = postQueryService.getPost(command.getPostId());
         final Comment comment = commentCommandService.saveComment(account, post, command.getContent());
+        return comment.getId();
+    }
+
+    public long updateComment(long commentId, String userId, CommentUpdateCommand command) {
+        final Account account = accountQueryService.getAccountByUserId(userId);
+        final Comment comment = commentCommandService.updateComment(account, commentId, command.getContent());
         return comment.getId();
     }
 }

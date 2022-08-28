@@ -10,7 +10,9 @@ import com.hg.blog.api.comment.service.CommentService;
 import com.hg.blog.response.Response;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,5 +32,15 @@ public class CommentController {
         @Valid @RequestBody CommentDto.CommentCreateCommand command
     ) {
         return Response.of(commentService.saveComment(userId, command));
+    }
+
+    @PutMapping("/{commentId}")
+    @Permit(Role.USER)
+    public Response<Long> updateComment(
+        @PathVariable long commentId,
+        @RequestAttribute String userId,
+        @Valid @RequestBody CommentDto.CommentUpdateCommand command
+    ) {
+        return Response.of(commentService.updateComment(commentId, userId, command));
     }
 }
