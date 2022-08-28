@@ -12,6 +12,7 @@ import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -22,9 +23,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hg.blog.api.comment.dto.CommentDto.CommentCreateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.CommentUpdateCommand;
+import com.hg.blog.api.comment.dto.CommentDto.GetComment;
 import com.hg.blog.api.comment.service.CommentService;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.util.JWTProvider;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -196,6 +199,25 @@ class CommentControllerTest {
                 .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE))
             .andExpect(status().is4xxClientError())
+            .andDo(print());
+    }
+
+    @Test
+    public void getCommentTest() throws Exception {
+        // given
+        long commentId = 1;
+        GetComment getComment = GetComment.of(1, "content", "nickname", LocalDateTime.now(), LocalDateTime.now());
+        given(commentService.getComment(commentId))
+            .willReturn(getComment);
+
+        // when, then
+        mockMvc.perform(get(API_PREFIX + COMMENT_API + "/{commentId}", commentId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.body.id", is(1)))
+            .andExpect(jsonPath("$.body.content", is("content")))
+            .andExpect(jsonPath("$.body.nickname", is("nickname")))
             .andDo(print());
     }
 }

@@ -8,10 +8,12 @@ import static org.mockito.Mockito.verify;
 
 import com.hg.blog.api.comment.dto.CommentDto.CommentCreateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.CommentUpdateCommand;
+import com.hg.blog.api.comment.dto.CommentDto.GetComment;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountQueryService;
 import com.hg.blog.domain.comment.entity.Comment;
 import com.hg.blog.domain.comment.service.CommentCommandService;
+import com.hg.blog.domain.comment.service.CommentQueryService;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.service.PostQueryService;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,8 @@ class CommentServiceTest {
 
     @Mock
     private CommentCommandService commentCommandService;
+    @Mock
+    private CommentQueryService commentQueryService;
     @Mock
     private PostQueryService postQueryService;
     @Mock
@@ -187,6 +191,40 @@ class CommentServiceTest {
 
         // when
         Executable execute = () -> commentService.deleteComment(commentId, userId);
+
+        // then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);
+        assertThat(exception.getMessage()).isEqualTo("존재하지 않는 댓글입니다.");
+    }
+
+    @Test
+    public void getCommentTest() {
+        // given
+        long commentId = 1;
+        Account account = createAccount();
+        Post post = createPost(account);
+        Comment comment = createComment(account, post);
+        given(commentQueryService.getComment(commentId))
+            .willReturn(comment);
+
+        // when
+        GetComment getComment = commentService.getComment(commentId);
+
+        // then
+        assertThat(getComment).isNotNull();
+        assertThat(getComment.getContent()).isEqualTo("content");
+        assertThat(getComment.getNickname()).isEqualTo("nickname");
+    }
+
+    @Test
+    public void getCommentTest_댓글이_존재하지_않을_경우_에러() {
+        // given
+        long commentId = 1;
+        given(commentQueryService.getComment(commentId))
+            .willThrow(new IllegalArgumentException("존재하지 않는 댓글입니다."));
+
+        // when
+        Executable execute = () -> commentService.getComment(commentId);
 
         // then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);

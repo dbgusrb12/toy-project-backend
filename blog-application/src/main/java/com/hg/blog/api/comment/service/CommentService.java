@@ -2,10 +2,12 @@ package com.hg.blog.api.comment.service;
 
 import com.hg.blog.api.comment.dto.CommentDto;
 import com.hg.blog.api.comment.dto.CommentDto.CommentUpdateCommand;
+import com.hg.blog.api.comment.dto.CommentDto.GetComment;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountQueryService;
 import com.hg.blog.domain.comment.entity.Comment;
 import com.hg.blog.domain.comment.service.CommentCommandService;
+import com.hg.blog.domain.comment.service.CommentQueryService;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.service.PostQueryService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class CommentService {
 
     private final CommentCommandService commentCommandService;
+    private final CommentQueryService commentQueryService;
     private final AccountQueryService accountQueryService;
     private final PostQueryService postQueryService;
 
@@ -35,5 +38,16 @@ public class CommentService {
     public void deleteComment(long commentId, String userId) {
         final Account owner = accountQueryService.getAccountByUserId(userId);
         commentCommandService.deleteComment(owner, commentId);
+    }
+
+    public GetComment getComment(long commentId) {
+        Comment comment = commentQueryService.getComment(commentId);
+        return GetComment.of(
+            comment.getId(),
+            comment.getContent(),
+            comment.getAccount().getNickname(),
+            comment.getCreated(),
+            comment.getUpdated()
+        );
     }
 }

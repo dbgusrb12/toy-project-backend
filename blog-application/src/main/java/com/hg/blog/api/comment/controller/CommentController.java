@@ -11,6 +11,7 @@ import com.hg.blog.response.Response;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -50,5 +51,10 @@ public class CommentController {
     public Response<Void> deleteComment(@PathVariable long commentId, @RequestAttribute String userId) {
         commentService.deleteComment(commentId, userId);
         return Response.ok();
+    }
+
+    @GetMapping("/{commentId}")
+    public Response<CommentDto.GetComment> getComment(@PathVariable long commentId) {
+        return Response.of(commentService.getComment(commentId));
     }
 }
