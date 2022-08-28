@@ -8,8 +8,10 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -163,6 +165,36 @@ class CommentControllerTest {
                 .accept(APPLICATION_JSON_VALUE)
                 .header(AUTHORIZATION, TOKEN_TYPE + " " + token)
                 .content(getBody(request)))
+            .andExpect(status().is4xxClientError())
+            .andDo(print());
+    }
+
+    @Test
+    public void deleteCommentTest() throws Exception {
+        // given
+        long commentId = 1;
+        Account account = Account.of("userId", "password", "nickname");
+        String token = JWTProvider.generateToken(account);
+        willDoNothing().given(commentService).deleteComment(commentId, "userId");
+
+        // when, then
+        mockMvc.perform(delete(API_PREFIX + COMMENT_API + "/{commentId}", commentId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE)
+                .header(AUTHORIZATION, TOKEN_TYPE + " " + token))
+            .andExpect(status().isOk())
+            .andDo(print());
+    }
+
+    @Test
+    public void deleteCommentTest_토큰_없을_경우_에러() throws Exception {
+        // given
+        long commentId = 1;
+
+        // when, then
+        mockMvc.perform(delete(API_PREFIX + COMMENT_API + "/{commentId}", commentId)
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
             .andExpect(status().is4xxClientError())
             .andDo(print());
     }
