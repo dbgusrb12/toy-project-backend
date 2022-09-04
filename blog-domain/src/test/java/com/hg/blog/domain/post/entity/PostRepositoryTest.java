@@ -8,6 +8,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
@@ -55,6 +57,22 @@ public class PostRepositoryTest {
         assertThat(findPost.getAccount()).isEqualTo(account);
     }
 
+    @Test
+    void findByContentContains() {
+        // given
+        Account account = saveAccount();
+        savePost(account);
+        savePost(account);
+        savePost(account);
+
+        // when
+        Page<Post> posts = postRepository.findByContentContainsAndDeleted("", false, PageRequest.of(0, 5));
+
+        // then
+        assertThat(posts.getTotalElements()).isEqualTo(3);
+        assertThat(posts.getContent().size()).isEqualTo(3);
+        assertThat(posts.getTotalPages()).isEqualTo(1);
+    }
 
     private Account saveAccount() {
         Account account = Account.of("userId", "password", "nickname");

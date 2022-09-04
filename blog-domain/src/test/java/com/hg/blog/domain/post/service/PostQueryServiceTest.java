@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.entity.AccountRepository;
+import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.entity.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,6 +63,18 @@ public class PostQueryServiceTest {
         // then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, execute);
         assertThat(exception.getMessage()).isEqualTo("존재하지 않는 게시글입니다.");
+    }
+
+    @Test
+    public void getPostsTest() {
+        // given, when
+        DefaultPage<Post> posts = postQueryService.getPosts(null, 0, 5);
+
+        // then
+        assertThat(posts.getTotalElements()).isEqualTo(1);
+        assertThat(posts.getTotalPages()).isEqualTo(1);
+        assertThat(posts.getCurrentPage()).isEqualTo(0);
+        assertThat(posts.getContent().size()).isEqualTo(1);
     }
 
     private Account saveAccount() {
