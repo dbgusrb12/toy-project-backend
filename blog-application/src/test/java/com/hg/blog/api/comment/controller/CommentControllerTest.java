@@ -196,7 +196,7 @@ class CommentControllerTest {
     public void getCommentTest() throws Exception {
         // given
         long commentId = 1;
-        GetComment getComment = GetComment.of(1, "content", "nickname", LocalDateTime.now(), LocalDateTime.now());
+        GetComment getComment = GetComment.of(1, 1, null, "content", "nickname", LocalDateTime.now(), LocalDateTime.now());
         given(commentService.getComment(commentId))
             .willReturn(getComment);
 

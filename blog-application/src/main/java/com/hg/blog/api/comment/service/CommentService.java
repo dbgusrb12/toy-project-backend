@@ -11,6 +11,7 @@ import com.hg.blog.domain.comment.service.CommentCommandService;
 import com.hg.blog.domain.comment.service.CommentQueryService;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.service.PostQueryService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +48,8 @@ public class CommentService {
         Comment comment = commentQueryService.getComment(commentId);
         return GetComment.of(
             comment.getId(),
+            comment.getPost().getId(),
+            Optional.ofNullable(comment.getParentComment()).map(Comment::getId).orElse(null),
             comment.getContent(),
             comment.getAccount().getNickname(),
             comment.getCreated(),

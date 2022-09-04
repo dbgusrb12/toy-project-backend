@@ -43,6 +43,8 @@ public class CommentDto {
     public static class GetComment {
 
         private long id;
+        private long postId;
+        private Long parentCommentId;
         private String content;
         private String nickname;
         private LocalDateTime created;
@@ -50,12 +52,14 @@ public class CommentDto {
 
         public static GetComment of(
             long id,
+            long postId,
+            Long parentCommentId,
             String content,
             String nickname,
             LocalDateTime created,
             LocalDateTime updated
         ) {
-            return new GetComment(id, content, nickname, created, updated);
+            return new GetComment(id, postId, parentCommentId, content, nickname, created, updated);
         }
     }
 }
