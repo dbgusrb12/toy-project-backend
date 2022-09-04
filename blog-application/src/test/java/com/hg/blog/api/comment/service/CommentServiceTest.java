@@ -10,13 +10,16 @@ import com.hg.blog.api.comment.dto.CommentDto.ChildCommentCreateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.CommentCreateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.CommentUpdateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.GetComment;
+import com.hg.blog.api.comment.dto.CommentType;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountQueryService;
 import com.hg.blog.domain.comment.entity.Comment;
 import com.hg.blog.domain.comment.service.CommentCommandService;
 import com.hg.blog.domain.comment.service.CommentQueryService;
+import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.service.PostQueryService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -289,6 +292,50 @@ class CommentServiceTest {
         assertThat(exception.getMessage()).isEqualTo("존재하지 않는 댓글입니다.");
     }
 
+    @Test
+    public void getCommentsTest() {
+        // given
+        Account account = createAccount();
+        Post post = createPost(account);
+        List<Comment> content = createComments(account, post);
+        long refId = 1;
+        int page = 0;
+        int size = 5;
+        given(commentQueryService.getComments(refId, page, size))
+            .willReturn(new DefaultPage<>(content, 3, 1, 0));
+
+        // when
+        DefaultPage<GetComment> comments = commentService.getComments(CommentType.ROOT, refId, page, size);
+
+        // then
+        assertThat(comments.getCurrentPage()).isEqualTo(0);
+        assertThat(comments.getTotalElements()).isEqualTo(3);
+        assertThat(comments.getTotalPages()).isEqualTo(1);
+        assertThat(comments.getContent().size()).isEqualTo(3);
+    }
+
+    @Test
+    public void getChildCommentsTest() {
+        // given
+        Account account = createAccount();
+        Post post = createPost(account);
+        List<Comment> content = createComments(account, post);
+        long refId = 1;
+        int page = 0;
+        int size = 5;
+        given(commentQueryService.getChildComments(refId, page, size))
+            .willReturn(new DefaultPage<>(content, 3, 1, 0));
+
+        // when
+        DefaultPage<GetComment> comments = commentService.getComments(CommentType.CHILD, refId, page, size);
+
+        // then
+        assertThat(comments.getCurrentPage()).isEqualTo(0);
+        assertThat(comments.getTotalElements()).isEqualTo(3);
+        assertThat(comments.getTotalPages()).isEqualTo(1);
+        assertThat(comments.getContent().size()).isEqualTo(3);
+    }
+
     private ChildCommentCreateCommand createChildCommentCreateCommand() {
         return new ChildCommentCreateCommand("comment content");
     }
@@ -311,5 +358,13 @@ class CommentServiceTest {
 
     private Comment createComment(Account account, Post post) {
         return Comment.of(account, post, content);
+    }
+
+    private List<Comment> createComments(Account account, Post post) {
+        return List.of(
+            createComment(account, post),
+            createComment(account, post),
+            createComment(account, post)
+        );
     }
 }

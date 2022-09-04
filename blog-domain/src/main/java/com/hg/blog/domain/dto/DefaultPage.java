@@ -16,7 +16,7 @@ public class DefaultPage<T> {
     private final long totalPages;
     private final long currentPage;
 
-    private DefaultPage(List<T> content, long totalElements, long totalPages, long currentPage) {
+    public DefaultPage(List<T> content, long totalElements, long totalPages, long currentPage) {
         this.content.addAll(content);
         this.totalElements = totalElements;
         this.totalPages = totalPages;
