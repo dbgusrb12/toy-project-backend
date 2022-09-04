@@ -38,37 +38,31 @@ public class PostServiceTest {
     public void savePostTest() {
         // given
         Account account = createAccount();
-        Post post = createPost(account);
         given(accountQueryService.getAccountByUserId(userId))
             .willReturn(account);
-        given(postCommandService.savePost(account, title, content))
-            .willReturn(post);
 
         // when
         PostCreateCommand request = createPostCreateCommand();
-        long id = postService.savePost(userId, request);
+        postService.savePost(userId, request);
 
         // then
-        assertThat(id).isEqualTo(0);
+        verify(postCommandService).savePost(account, title, content);
     }
 
     @Test
     public void updatePostTest() {
         // given
         Account account = createAccount();
-        Post post = createPost(account);
         long postId = 1;
         PostUpdateCommand command = createPostUpdateCommand();
         given(accountQueryService.getAccountByUserId(userId))
             .willReturn(account);
-        given(postCommandService.updatePost(account, postId, command.getTitle(), command.getContent()))
-            .willReturn(post);
 
         // when
-        long id = postService.updatePost(postId, userId, command);
+        postService.updatePost(postId, userId, command);
 
         // then
-        assertThat(id).isEqualTo(0);
+        verify(postCommandService).updatePost(account, postId, command.getTitle(), command.getContent());
     }
 
     @Test

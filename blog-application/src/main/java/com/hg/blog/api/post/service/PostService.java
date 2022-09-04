@@ -10,6 +10,7 @@ import com.hg.blog.domain.post.service.PostCommandService;
 import com.hg.blog.domain.post.service.PostQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,18 +20,19 @@ public class PostService {
     private final PostQueryService postQueryService;
     private final AccountQueryService accountQueryService;
 
-    public long savePost(String userId, PostCreateCommand request) {
+    @Transactional
+    public void savePost(String userId, PostCreateCommand request) {
         final Account owner = accountQueryService.getAccountByUserId(userId);
-        final Post post = postCommandService.savePost(owner, request.getTitle(), request.getContent());
-        return post.getId();
+        postCommandService.savePost(owner, request.getTitle(), request.getContent());
     }
 
-    public long updatePost(long postId, String userId, PostUpdateCommand command) {
+    @Transactional
+    public void updatePost(long postId, String userId, PostUpdateCommand command) {
         final Account owner = accountQueryService.getAccountByUserId(userId);
-        final Post post = postCommandService.updatePost(owner, postId, command.getTitle(), command.getContent());
-        return post.getId();
+        postCommandService.updatePost(owner, postId, command.getTitle(), command.getContent());
     }
 
+    @Transactional
     public void deletePost(long postId, String userId) {
         final Account owner = accountQueryService.getAccountByUserId(userId);
         postCommandService.deletePost(owner, postId);

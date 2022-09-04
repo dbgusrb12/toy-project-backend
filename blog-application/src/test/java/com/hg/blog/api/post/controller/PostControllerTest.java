@@ -4,8 +4,6 @@ import static com.hg.blog.constants.Constants.API_PREFIX;
 import static com.hg.blog.constants.Constants.POST_API;
 import static com.hg.blog.constants.Constants.TOKEN_TYPE;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -54,8 +52,6 @@ public class PostControllerTest {
         PostCreateCommand request = new PostCreateCommand("post1", "content");
         Account account = Account.of("userId", "password", "nickname");
         String token = JWTProvider.generateToken(account);
-        given(postService.savePost(eq("userId"), any()))
-            .willReturn(1L);
 
         // when, then
         mockMvc.perform(post(API_PREFIX + POST_API)
@@ -63,8 +59,7 @@ public class PostControllerTest {
                 .accept(APPLICATION_JSON_VALUE)
                 .header(AUTHORIZATION, TOKEN_TYPE + " " + token)
                 .content(getBody(request)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.body", is(1)));
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -86,8 +81,6 @@ public class PostControllerTest {
         PostCreateCommand request = new PostCreateCommand(null, "content");
         Account account = Account.of("userId", "password", "nickname");
         String token = JWTProvider.generateToken(account);
-        given(postService.savePost(eq("userId"), any()))
-            .willReturn(1L);
 
         // when, then
         mockMvc.perform(post(API_PREFIX + POST_API)
@@ -105,8 +98,6 @@ public class PostControllerTest {
         long postId = 1;
         Account account = Account.of("userId", "password", "nickname");
         String token = JWTProvider.generateToken(account);
-        given(postService.updatePost(eq(postId), eq("userId"), any()))
-            .willReturn(postId);
 
         // when, then
         mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
@@ -114,8 +105,7 @@ public class PostControllerTest {
                 .accept(APPLICATION_JSON_VALUE)
                 .header(AUTHORIZATION, TOKEN_TYPE + " " + token)
                 .content(getBody(request)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.body", is(1)));
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -139,8 +129,6 @@ public class PostControllerTest {
         long postId = 1;
         Account account = Account.of("userId", "password", "nickname");
         String token = JWTProvider.generateToken(account);
-        given(postService.updatePost(eq(postId), eq("userId"), any()))
-            .willReturn(postId);
 
         // when, then
         mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
@@ -158,8 +146,6 @@ public class PostControllerTest {
         long postId = 1;
         Account account = Account.of("userId", "password", "nickname");
         String token = JWTProvider.generateToken(account);
-        given(postService.updatePost(eq(postId), eq("userId"), any()))
-            .willReturn(postId);
 
         // when, then
         mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)

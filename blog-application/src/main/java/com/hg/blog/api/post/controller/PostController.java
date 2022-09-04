@@ -29,21 +29,23 @@ public class PostController {
 
     @PostMapping("")
     @Permit(Role.USER)
-    public Response<Long> savePost(
+    public Response<Void> savePost(
         @RequestAttribute String userId,
         @Valid @RequestBody PostDto.PostCreateCommand command
     ) {
-        return Response.of(postService.savePost(userId, command));
+        postService.savePost(userId, command);
+        return Response.ok();
     }
 
     @PutMapping("/{postId}")
     @Permit(Role.USER)
-    public Response<Long> updatePost(
+    public Response<Void> updatePost(
         @PathVariable long postId,
         @RequestAttribute String userId,
         @Valid @RequestBody PostDto.PostUpdateCommand command
     ) {
-        return Response.of(postService.updatePost(postId, userId, command));
+        postService.updatePost(postId, userId, command);
+        return Response.ok();
     }
 
     @DeleteMapping("/{postId}")
