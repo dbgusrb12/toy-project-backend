@@ -11,6 +11,7 @@ import com.hg.blog.util.RSAUtil;
 import com.hg.blog.util.SHA256Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class AccountService {
     private final AccountCommandService accountCommandService;
     private final AccountQueryService accountQueryService;
 
+    @Transactional
     public void signUp(SignUpCommand request) {
         accountCommandService.saveAccount(
             request.getUserId(),
