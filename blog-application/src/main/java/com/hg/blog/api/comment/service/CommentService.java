@@ -13,6 +13,7 @@ import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.service.PostQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,19 +24,20 @@ public class CommentService {
     private final AccountQueryService accountQueryService;
     private final PostQueryService postQueryService;
 
-    public long saveComment(String userId, CommentCreateCommand command) {
+    @Transactional
+    public void saveComment(String userId, CommentCreateCommand command) {
         final Account owner = accountQueryService.getAccountByUserId(userId);
         final Post post = postQueryService.getPost(command.getPostId());
-        final Comment comment = commentCommandService.saveComment(owner, post, command.getContent());
-        return comment.getId();
+        commentCommandService.saveComment(owner, post, command.getContent());
     }
 
-    public long updateComment(long commentId, String userId, CommentUpdateCommand command) {
+    @Transactional
+    public void updateComment(long commentId, String userId, CommentUpdateCommand command) {
         final Account owner = accountQueryService.getAccountByUserId(userId);
-        final Comment comment = commentCommandService.updateComment(owner, commentId, command.getContent());
-        return comment.getId();
+        commentCommandService.updateComment(owner, commentId, command.getContent());
     }
 
+    @Transactional
     public void deleteComment(long commentId, String userId) {
         final Account owner = accountQueryService.getAccountByUserId(userId);
         commentCommandService.deleteComment(owner, commentId);
@@ -52,10 +54,10 @@ public class CommentService {
         );
     }
 
-    public long saveChildComment(long commentId, String userId, ChildCommentCreateCommand command) {
+    @Transactional
+    public void saveChildComment(long commentId, String userId, ChildCommentCreateCommand command) {
         final Account owner = accountQueryService.getAccountByUserId(userId);
         final Comment parentComment = commentQueryService.getComment(commentId);
-        final Comment comment = commentCommandService.saveChildComment(owner, parentComment, command.getContent());
-        return comment.getId();
+        commentCommandService.saveChildComment(owner, parentComment, command.getContent());
     }
 }

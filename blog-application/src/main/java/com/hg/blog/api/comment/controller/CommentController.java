@@ -29,21 +29,23 @@ public class CommentController {
 
     @PostMapping("")
     @Permit(Role.USER)
-    public Response<Long> saveComment(
+    public Response<Void> saveComment(
         @RequestAttribute String userId,
         @Valid @RequestBody CommentDto.CommentCreateCommand command
     ) {
-        return Response.of(commentService.saveComment(userId, command));
+        commentService.saveComment(userId, command);
+        return Response.ok();
     }
 
     @PutMapping("/{commentId}")
     @Permit(Role.USER)
-    public Response<Long> updateComment(
+    public Response<Void> updateComment(
         @PathVariable long commentId,
         @RequestAttribute String userId,
         @Valid @RequestBody CommentDto.CommentUpdateCommand command
     ) {
-        return Response.of(commentService.updateComment(commentId, userId, command));
+        commentService.updateComment(commentId, userId, command);
+        return Response.ok();
     }
 
     @DeleteMapping("/{commentId}")
@@ -60,11 +62,12 @@ public class CommentController {
 
     @PostMapping("/{commentId}")
     @Permit(Role.USER)
-    public Response<Long> saveChildComment(
+    public Response<Void> saveChildComment(
         @PathVariable long commentId,
         @RequestAttribute String userId,
         @Valid @RequestBody CommentDto.ChildCommentCreateCommand command
     ) {
-        return Response.of(commentService.saveChildComment(commentId, userId, command));
+        commentService.saveChildComment(commentId, userId, command);
+        return Response.ok();
     }
 }

@@ -56,10 +56,10 @@ class CommentServiceTest {
             .willReturn(comment);
 
         // when
-        long id = commentService.saveComment(userId, command);
+        commentService.saveComment(userId, command);
 
         // then
-        assertThat(id).isEqualTo(0);
+        verify(commentCommandService).saveComment(account, post, command.getContent());
     }
 
     @Test
@@ -109,10 +109,10 @@ class CommentServiceTest {
             .willReturn(comment);
 
         // when
-        long id = commentService.updateComment(commentId, userId, command);
+        commentService.updateComment(commentId, userId, command);
 
         // then
-        assertThat(id).isEqualTo(0);
+        verify(commentCommandService).updateComment(account, commentId, command.getContent());
     }
 
     @Test
@@ -249,10 +249,10 @@ class CommentServiceTest {
             .willReturn(childComment);
 
         // when
-        long id = commentService.saveChildComment(commentId, userId, command);
+        commentService.saveChildComment(commentId, userId, command);
 
         // then
-        assertThat(id).isEqualTo(0);
+        verify(commentCommandService).saveChildComment(account, comment, command.getContent());
     }
 
     @Test
