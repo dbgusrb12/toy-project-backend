@@ -10,6 +10,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
@@ -94,6 +96,45 @@ class CommentRepositoryTest {
         assertThat(findComment.getContent()).isEqualTo(content);
         assertThat(findComment.getPost()).isEqualTo(post);
         assertThat(findComment.getParentComment()).isEqualTo(comment);
+    }
+
+    @Test
+    void findByPostId() {
+        // given
+        Account account = saveAccount();
+        Post post = savePost(account);
+        saveComment(account, post);
+        saveComment(account, post);
+        saveComment(account, post);
+
+        // when
+        Page<Comment> comments = commentRepository.findByPost_IdAndParentCommentIsNullAndDeleted(post.getId(), false,
+            PageRequest.of(0, 5));
+
+        // then
+        assertThat(comments.getTotalElements()).isEqualTo(3);
+        assertThat(comments.getContent().size()).isEqualTo(3);
+        assertThat(comments.getTotalPages()).isEqualTo(1);
+    }
+
+    @Test
+    void findByParentCommentId() {
+        // given
+        Account account = saveAccount();
+        Post post = savePost(account);
+        Comment comment = saveComment(account, post);
+        saveChildComment(account, post, comment);
+        saveChildComment(account, post, comment);
+        saveChildComment(account, post, comment);
+        PageRequest pageable = PageRequest.of(0, 5);
+
+        // when
+        Page<Comment> comments = commentRepository.findByParentComment_IdAndDeleted(comment.getId(), false, pageable);
+
+        // then
+        assertThat(comments.getTotalElements()).isEqualTo(3);
+        assertThat(comments.getContent().size()).isEqualTo(3);
+        assertThat(comments.getTotalPages()).isEqualTo(1);
     }
 
     private Account saveAccount() {

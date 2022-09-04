@@ -6,6 +6,7 @@ import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.entity.AccountRepository;
 import com.hg.blog.domain.comment.entity.Comment;
 import com.hg.blog.domain.comment.entity.CommentRepository;
+import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.entity.PostRepository;
 import java.util.List;
@@ -34,6 +35,7 @@ class CommentQueryServiceTest {
     private CommentQueryService commentQueryService;
 
     private final String content = "content";
+    private long postId;
     private long commentId;
     private long childCommentId;
     private long lastCommentId;
@@ -45,6 +47,7 @@ class CommentQueryServiceTest {
         Comment comment = saveComment(account, post);
         Comment childComment = saveChildComment(account, post, comment);
         Comment lastComment = saveChildComment(account, post, childComment);
+        this.postId = post.getId();
         this.commentId = comment.getId();
         this.childCommentId = childComment.getId();
         this.lastCommentId = lastComment.getId();
@@ -72,6 +75,27 @@ class CommentQueryServiceTest {
         assertThat(childComment.size()).isEqualTo(1);
         assertThat(childComment.get(0).getId()).isEqualTo(lastCommentId);
     }
+
+    @Test
+    void getCommentsTest() {
+        DefaultPage<Comment> comments = commentQueryService.getComments(postId, 0, 5);
+
+        assertThat(comments.getTotalElements()).isEqualTo(1);
+        assertThat(comments.getTotalPages()).isEqualTo(1);
+        assertThat(comments.getCurrentPage()).isEqualTo(0);
+        assertThat(comments.getContent().size()).isEqualTo(1);
+    }
+
+    @Test
+    void getChildCommentsTest() {
+        DefaultPage<Comment> comments = commentQueryService.getChildComments(commentId, 0, 5);
+
+        assertThat(comments.getTotalElements()).isEqualTo(1);
+        assertThat(comments.getTotalPages()).isEqualTo(1);
+        assertThat(comments.getCurrentPage()).isEqualTo(0);
+        assertThat(comments.getContent().size()).isEqualTo(1);
+    }
+
 
     private Account saveAccount() {
         Account account = Account.of("userId", "password", "nickname");
