@@ -3,6 +3,7 @@ package com.hg.blog.api.post.controller;
 import static com.hg.blog.constants.Constants.API_PREFIX;
 import static com.hg.blog.constants.Constants.POST_API;
 import static com.hg.blog.constants.Constants.TOKEN_TYPE;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -12,6 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,8 +24,10 @@ import com.hg.blog.api.post.dto.PostDto.PostCreateCommand;
 import com.hg.blog.api.post.dto.PostDto.PostUpdateCommand;
 import com.hg.blog.api.post.service.PostService;
 import com.hg.blog.domain.account.entity.Account;
+import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.util.JWTProvider;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -201,6 +205,32 @@ public class PostControllerTest {
             .andExpect(jsonPath("$.body.title", is("title")))
             .andExpect(jsonPath("$.body.content", is("content")))
             .andExpect(jsonPath("$.body.nickname", is("nickname")));
+    }
+
+    @Test
+    public void getPostsTest() throws Exception {
+        // given
+        String search = "";
+        int page = 0;
+        int size = 5;
+        List<GetPost> content = List.of(
+            GetPost.of(1, "title", "content", "nickname", LocalDateTime.now(), LocalDateTime.now()),
+            GetPost.of(1, "title", "content", "nickname", LocalDateTime.now(), LocalDateTime.now()),
+            GetPost.of(1, "title", "content", "nickname", LocalDateTime.now(), LocalDateTime.now())
+        );
+        given(postService.getPosts(search, page, size))
+            .willReturn(new DefaultPage<>(content, 3, 1, 0));
+
+        // when, then
+        mockMvc.perform(get(API_PREFIX + POST_API)
+                .param("search", search)
+                .param("page", String.valueOf(page))
+                .param("size", String.valueOf(size))
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.body.content", hasSize(3)))
+            .andDo(print());
     }
 
 

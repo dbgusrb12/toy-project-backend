@@ -6,7 +6,9 @@ import static com.hg.blog.constants.Constants.POST_API;
 import com.hg.blog.annotation.Permit;
 import com.hg.blog.annotation.Role;
 import com.hg.blog.api.post.dto.PostDto;
+import com.hg.blog.api.post.dto.PostDto.GetPost;
 import com.hg.blog.api.post.service.PostService;
+import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.response.Response;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -58,6 +61,15 @@ public class PostController {
     @GetMapping("/{postId}")
     public Response<PostDto.GetPost> getPost(@PathVariable long postId) {
         return Response.of(postService.getPost(postId));
+    }
+
+    @GetMapping("")
+    public Response<DefaultPage<GetPost>> getPosts(
+        @RequestParam(required = false) String search,
+        @RequestParam int page,
+        @RequestParam int size
+    ) {
+        return Response.of(postService.getPosts(search, page, size));
     }
 
 }

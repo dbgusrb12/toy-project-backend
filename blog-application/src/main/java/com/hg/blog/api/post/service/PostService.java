@@ -5,6 +5,7 @@ import com.hg.blog.api.post.dto.PostDto.PostCreateCommand;
 import com.hg.blog.api.post.dto.PostDto.PostUpdateCommand;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountQueryService;
+import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.service.PostCommandService;
 import com.hg.blog.domain.post.service.PostQueryService;
@@ -47,6 +48,20 @@ public class PostService {
             post.getAccount().getNickname(),
             post.getCreated(),
             post.getUpdated()
+        );
+    }
+
+    public DefaultPage<GetPost> getPosts(String search, int page, int size) {
+        DefaultPage<Post> posts = postQueryService.getPosts(search, page, size);
+        return posts.map(post ->
+            GetPost.of(
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                post.getAccount().getNickname(),
+                post.getCreated(),
+                post.getUpdated()
+            )
         );
     }
 }
