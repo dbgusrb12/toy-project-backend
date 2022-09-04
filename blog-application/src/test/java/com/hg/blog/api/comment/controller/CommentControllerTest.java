@@ -3,6 +3,7 @@ package com.hg.blog.api.comment.controller;
 import static com.hg.blog.constants.Constants.API_PREFIX;
 import static com.hg.blog.constants.Constants.COMMENT_API;
 import static com.hg.blog.constants.Constants.TOKEN_TYPE;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -21,10 +22,13 @@ import com.hg.blog.api.comment.dto.CommentDto.ChildCommentCreateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.CommentCreateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.CommentUpdateCommand;
 import com.hg.blog.api.comment.dto.CommentDto.GetComment;
+import com.hg.blog.api.comment.dto.CommentType;
 import com.hg.blog.api.comment.service.CommentService;
 import com.hg.blog.domain.account.entity.Account;
+import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.util.JWTProvider;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -196,7 +200,8 @@ class CommentControllerTest {
     public void getCommentTest() throws Exception {
         // given
         long commentId = 1;
-        GetComment getComment = GetComment.of(1, 1, null, "content", "nickname", LocalDateTime.now(), LocalDateTime.now());
+        GetComment getComment = GetComment.of(1, 1, null, "content", "nickname", LocalDateTime.now(),
+            LocalDateTime.now());
         given(commentService.getComment(commentId))
             .willReturn(getComment);
 
@@ -259,6 +264,57 @@ class CommentControllerTest {
                 .content(getBody(request))
                 .header(AUTHORIZATION, TOKEN_TYPE + " " + token))
             .andExpect(status().is4xxClientError())
+            .andDo(print());
+    }
+
+    @Test
+    public void getCommentsTest() throws Exception {
+        // given
+        long postId = 1;
+        int page = 0;
+        int size = 5;
+        List<GetComment> getComments = List.of(
+            GetComment.of(1, 1, null, "content", "nickname", LocalDateTime.now(), LocalDateTime.now()),
+            GetComment.of(1, 1, null, "content", "nickname", LocalDateTime.now(), LocalDateTime.now()),
+            GetComment.of(1, 1, null, "content", "nickname", LocalDateTime.now(), LocalDateTime.now())
+        );
+        given(commentService.getComments(CommentType.ROOT, postId, page, size))
+            .willReturn(new DefaultPage<>(getComments, 3, 1, 0));
+
+        // when, then
+        mockMvc.perform(get(API_PREFIX + COMMENT_API)
+                .param("postId", String.valueOf(postId))
+                .param("page", String.valueOf(page))
+                .param("size", String.valueOf(size))
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.body.content", hasSize(3)))
+            .andDo(print());
+    }
+
+    @Test
+    public void getChildCommentsTest() throws Exception {
+        // given
+        long commentId = 1;
+        int page = 0;
+        int size = 5;
+        List<GetComment> getComments = List.of(
+            GetComment.of(1, 1, null, "content", "nickname", LocalDateTime.now(), LocalDateTime.now()),
+            GetComment.of(1, 1, null, "content", "nickname", LocalDateTime.now(), LocalDateTime.now()),
+            GetComment.of(1, 1, null, "content", "nickname", LocalDateTime.now(), LocalDateTime.now())
+        );
+        given(commentService.getComments(CommentType.CHILD, commentId, page, size))
+            .willReturn(new DefaultPage<>(getComments, 3, 1, 0));
+
+        // when, then
+        mockMvc.perform(get(API_PREFIX + COMMENT_API + "/{commentId}" + COMMENT_API, commentId)
+                .param("page", String.valueOf(page))
+                .param("size", String.valueOf(size))
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.body.content", hasSize(3)))
             .andDo(print());
     }
 }

@@ -6,7 +6,10 @@ import static com.hg.blog.constants.Constants.COMMENT_API;
 import com.hg.blog.annotation.Permit;
 import com.hg.blog.annotation.Role;
 import com.hg.blog.api.comment.dto.CommentDto;
+import com.hg.blog.api.comment.dto.CommentDto.GetComment;
+import com.hg.blog.api.comment.dto.CommentType;
 import com.hg.blog.api.comment.service.CommentService;
+import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.response.Response;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -69,5 +73,23 @@ public class CommentController {
     ) {
         commentService.saveChildComment(commentId, userId, command);
         return Response.ok();
+    }
+
+    @GetMapping("")
+    public Response<DefaultPage<GetComment>> getComments(
+        @RequestParam long postId,
+        @RequestParam int page,
+        @RequestParam int size
+    ) {
+        return Response.of(commentService.getComments(CommentType.ROOT, postId, page, size));
+    }
+
+    @GetMapping("/{commentId}" + COMMENT_API)
+    public Response<DefaultPage<GetComment>> getChildComments(
+        @PathVariable long commentId,
+        @RequestParam int page,
+        @RequestParam int size
+    ) {
+        return Response.of(commentService.getComments(CommentType.CHILD, commentId, page, size));
     }
 }
