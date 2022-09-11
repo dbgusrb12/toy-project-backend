@@ -2,7 +2,6 @@ package com.hg.blog.domain.post.entity;
 
 import com.hg.blog.domain.account.entity.Account;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -33,10 +32,8 @@ public class Post {
 
     private String content;
 
-    @Column(updatable = false)
     private LocalDateTime created = LocalDateTime.now();
 
-    @Column(updatable = false)
     private LocalDateTime updated = LocalDateTime.now();
 
     private boolean deleted;

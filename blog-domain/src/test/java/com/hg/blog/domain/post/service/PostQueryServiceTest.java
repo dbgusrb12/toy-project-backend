@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.entity.AccountRepository;
 import com.hg.blog.domain.dto.DefaultPage;
+import com.hg.blog.domain.keyword.event.KeywordEventPublisher;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.entity.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +18,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
-@Import(PostQueryService.class)
+@Import({PostQueryService.class, KeywordEventPublisher.class})
 @ActiveProfiles({"blog-domain", "local"})
 public class PostQueryServiceTest {
 
@@ -68,7 +69,7 @@ public class PostQueryServiceTest {
     @Test
     public void getPostsTest() {
         // given, when
-        DefaultPage<Post> posts = postQueryService.getPosts(null, 0, 5);
+        DefaultPage<Post> posts = postQueryService.getPosts("content", 0, 5);
 
         // then
         assertThat(posts.getTotalElements()).isEqualTo(1);
