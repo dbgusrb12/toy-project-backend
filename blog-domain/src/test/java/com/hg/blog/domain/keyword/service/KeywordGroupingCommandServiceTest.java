@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 @DataJpaTest
 @Import(KeywordCommandService.class)
 @ActiveProfiles({"blog-domain", "local"})
-class KeywordCommandServiceTest {
+class KeywordGroupingCommandServiceTest {
 
     @Autowired
     KeywordCommandService keywordCommandService;
