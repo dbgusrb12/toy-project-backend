@@ -28,6 +28,7 @@ subprojects {
     }
     ext {
         springCloudVersion = '2021.0.3'
+        queryDslVersion = "5.0.0";
     }
 
     repositories {
