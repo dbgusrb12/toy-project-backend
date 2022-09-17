@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.hg.blog.domain.keyword.entity.Keyword;
 import com.hg.blog.domain.keyword.entity.KeywordRepository;
+import com.hg.blog.domain.keyword.event.KeywordEventPublisher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -11,7 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
-@Import(KeywordCommandService.class)
+@Import({KeywordCommandService.class, KeywordEventPublisher.class})
 @ActiveProfiles({"blog-domain", "local"})
 class KeywordGroupingCommandServiceTest {
 
