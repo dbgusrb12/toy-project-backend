@@ -5,8 +5,10 @@ import static com.hg.blog.constants.Constants.POST_API;
 
 import com.hg.blog.annotation.Permit;
 import com.hg.blog.annotation.Role;
+import com.hg.blog.api.post.dto.BlogType;
 import com.hg.blog.api.post.dto.PostDto;
-import com.hg.blog.api.post.dto.PostDto.GetPost;
+import com.hg.blog.api.post.dto.PostDto.GetPostList;
+import com.hg.blog.api.post.service.PostSearchService;
 import com.hg.blog.api.post.service.PostService;
 import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.response.Response;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
 
     private final PostService postService;
+    private final PostSearchService postSearchService;
 
     @PostMapping("")
     @Permit(Role.USER)
@@ -64,12 +67,13 @@ public class PostController {
     }
 
     @GetMapping("")
-    public Response<DefaultPage<GetPost>> getPosts(
+    public Response<DefaultPage<GetPostList>> getPosts(
+        @RequestParam BlogType blogType,
         @RequestParam(required = false) String search,
         @RequestParam int page,
         @RequestParam int size
     ) {
-        return Response.of(postService.getPosts(search, page, size));
+        return Response.of(postSearchService.getPosts(blogType, search, page, size));
     }
 
 }

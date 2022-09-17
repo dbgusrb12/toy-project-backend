@@ -19,9 +19,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hg.blog.api.post.dto.BlogType;
 import com.hg.blog.api.post.dto.PostDto.GetPost;
+import com.hg.blog.api.post.dto.PostDto.GetPostList;
 import com.hg.blog.api.post.dto.PostDto.PostCreateCommand;
 import com.hg.blog.api.post.dto.PostDto.PostUpdateCommand;
+import com.hg.blog.api.post.service.DefaultPostSearchService;
 import com.hg.blog.api.post.service.PostService;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.dto.DefaultPage;
@@ -42,6 +45,9 @@ public class PostControllerTest {
 
     @MockBean
     private PostService postService;
+
+    @MockBean
+    private DefaultPostSearchService defaultPostSearchService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -213,16 +219,17 @@ public class PostControllerTest {
         String search = "";
         int page = 0;
         int size = 5;
-        List<GetPost> content = List.of(
-            GetPost.of(1, "title", "content", "nickname", LocalDateTime.now(), LocalDateTime.now()),
-            GetPost.of(1, "title", "content", "nickname", LocalDateTime.now(), LocalDateTime.now()),
-            GetPost.of(1, "title", "content", "nickname", LocalDateTime.now(), LocalDateTime.now())
+        List<GetPostList> content = List.of(
+            new GetPostList(BlogType.IN_APP, 1L, "title", "content", "nickname", "", LocalDateTime.now()),
+            new GetPostList(BlogType.IN_APP, 1L, "title", "content", "nickname", "", LocalDateTime.now()),
+            new GetPostList(BlogType.IN_APP, 1L, "title", "content", "nickname", "", LocalDateTime.now())
         );
-        given(postService.getPosts(search, page, size))
-            .willReturn(new DefaultPage<>(content, 3, 1, 0));
+        given(defaultPostSearchService.getPosts(BlogType.IN_APP, search, page, size))
+            .willReturn(new DefaultPage<>(content, 3, 1));
 
         // when, then
         mockMvc.perform(get(API_PREFIX + POST_API)
+                .param("blogType", BlogType.IN_APP.name())
                 .param("search", search)
                 .param("page", String.valueOf(page))
                 .param("size", String.valueOf(size))

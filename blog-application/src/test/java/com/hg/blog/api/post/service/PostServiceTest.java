@@ -102,23 +102,23 @@ public class PostServiceTest {
         assertThat(getPost.getNickname()).isEqualTo(account.getNickname());
     }
 
-    @Test
-    public void getPostsTest() {
-        // given
-        String search = "";
-        int page = 0;
-        int size = 5;
-        Account account = createAccount();
-        List<Post> content = createPosts(account);
-
-        given(postQueryService.getPosts(search, page, size))
-            .willReturn(new DefaultPage<>(content, 3, 1));
-
-        DefaultPage<GetPost> posts = postService.getPosts(BlogType.IN_APP, search, page, size);
-        assertThat(posts.getTotalElements()).isEqualTo(3);
-        assertThat(posts.getTotalPages()).isEqualTo(1);
-        assertThat(posts.getContent().size()).isEqualTo(3);
-    }
+//    @Test
+//    public void getPostsTest() {
+//        // given
+//        String search = "";
+//        int page = 0;
+//        int size = 5;
+//        Account account = createAccount();
+//        List<Post> content = createPosts(account);
+//
+//        given(postQueryService.getPosts(search, page, size))
+//            .willReturn(new DefaultPage<>(content, 3, 1));
+//
+//        DefaultPage<GetPost> posts = postService.getPosts(BlogType.IN_APP, search, page, size);
+//        assertThat(posts.getTotalElements()).isEqualTo(3);
+//        assertThat(posts.getTotalPages()).isEqualTo(1);
+//        assertThat(posts.getContent().size()).isEqualTo(3);
+//    }
 
     private PostCreateCommand createPostCreateCommand() {
         return new PostCreateCommand(title, content);

@@ -49,4 +49,19 @@ public class PostDto {
             return new GetPost(id, title, content, nickname, created, updated);
         }
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class GetPostList {
+
+        // BlogType 이 IN_APP 일 경우 link null
+        // BlogType 이 NAVER, KAKAO 일 경우 id null, name 은 blog 이름
+        private BlogType blogType;
+        private Long id;
+        private String title;
+        private String content;
+        private String name;
+        private String link;
+        private LocalDateTime created;
+    }
 }
