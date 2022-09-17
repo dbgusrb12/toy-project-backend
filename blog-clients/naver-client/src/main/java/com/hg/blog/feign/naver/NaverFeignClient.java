@@ -11,8 +11,8 @@ interface NaverFeignClient {
     @GetMapping("/search/blog.json")
     BlogResult getBlogList(
         @RequestParam("query") String query,
-        @RequestParam(value = "display", required = false) Long display,
-        @RequestParam(value = "start", required = false) Long start,
+        @RequestParam(value = "start", required = false) Integer start,
+        @RequestParam(value = "display", required = false) Integer display,
         @RequestParam(value = "sort", required = false) String sort
     );
 }

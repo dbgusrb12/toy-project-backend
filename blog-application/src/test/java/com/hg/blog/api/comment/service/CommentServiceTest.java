@@ -302,13 +302,12 @@ class CommentServiceTest {
         int page = 0;
         int size = 5;
         given(commentQueryService.getComments(refId, page, size))
-            .willReturn(new DefaultPage<>(content, 3, 1, 0));
+            .willReturn(new DefaultPage<>(content, 3, 1));
 
         // when
         DefaultPage<GetComment> comments = commentService.getComments(CommentType.ROOT, refId, page, size);
 
         // then
-        assertThat(comments.getCurrentPage()).isEqualTo(0);
         assertThat(comments.getTotalElements()).isEqualTo(3);
         assertThat(comments.getTotalPages()).isEqualTo(1);
         assertThat(comments.getContent().size()).isEqualTo(3);
@@ -324,13 +323,12 @@ class CommentServiceTest {
         int page = 0;
         int size = 5;
         given(commentQueryService.getChildComments(refId, page, size))
-            .willReturn(new DefaultPage<>(content, 3, 1, 0));
+            .willReturn(new DefaultPage<>(content, 3, 1));
 
         // when
         DefaultPage<GetComment> comments = commentService.getComments(CommentType.CHILD, refId, page, size);
 
         // then
-        assertThat(comments.getCurrentPage()).isEqualTo(0);
         assertThat(comments.getTotalElements()).isEqualTo(3);
         assertThat(comments.getTotalPages()).isEqualTo(1);
         assertThat(comments.getContent().size()).isEqualTo(3);

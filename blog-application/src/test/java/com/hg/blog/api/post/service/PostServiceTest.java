@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+import com.hg.blog.api.post.dto.BlogType;
 import com.hg.blog.api.post.dto.PostDto.GetPost;
 import com.hg.blog.api.post.dto.PostDto.PostCreateCommand;
 import com.hg.blog.api.post.dto.PostDto.PostUpdateCommand;
@@ -111,10 +112,9 @@ public class PostServiceTest {
         List<Post> content = createPosts(account);
 
         given(postQueryService.getPosts(search, page, size))
-            .willReturn(new DefaultPage<>(content, 3, 1, 0));
+            .willReturn(new DefaultPage<>(content, 3, 1));
 
-        DefaultPage<GetPost> posts = postService.getPosts(search, page, size);
-        assertThat(posts.getCurrentPage()).isEqualTo(0);
+        DefaultPage<GetPost> posts = postService.getPosts(BlogType.IN_APP, search, page, size);
         assertThat(posts.getTotalElements()).isEqualTo(3);
         assertThat(posts.getTotalPages()).isEqualTo(1);
         assertThat(posts.getContent().size()).isEqualTo(3);

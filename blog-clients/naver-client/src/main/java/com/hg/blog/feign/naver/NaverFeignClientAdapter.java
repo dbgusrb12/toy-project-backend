@@ -19,10 +19,10 @@ public class NaverFeignClientAdapter {
 
     public BlogResult getBlogList(
         @NotBlank String query,
-        @Min(1) @Max(100) Long display,
-        @Min(1) @Max(100) Long start,
+        @Min(1) @Max(1000) Integer start,
+        @Min(1) @Max(100) Integer display,
         @NotNull NaverSort sort
     ) {
-        return naverFeignClient.getBlogList(query, display, start, sort.getSort());
+        return naverFeignClient.getBlogList(query, start, display, sort.getSort());
     }
 }

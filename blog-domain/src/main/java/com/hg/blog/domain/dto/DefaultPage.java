@@ -14,17 +14,15 @@ public class DefaultPage<T> {
     private final List<T> content = new ArrayList<>();
     private final long totalElements;
     private final long totalPages;
-    private final long currentPage;
 
-    public DefaultPage(List<T> content, long totalElements, long totalPages, long currentPage) {
+    public DefaultPage(List<T> content, long totalElements, long totalPages) {
         this.content.addAll(content);
         this.totalElements = totalElements;
         this.totalPages = totalPages;
-        this.currentPage = currentPage;
     }
 
     public <U> DefaultPage<U> map(Function<? super T, ? extends U> converter) {
-        return new DefaultPage<>(getConvertedContent(converter), this.totalElements, this.totalPages, this.currentPage);
+        return new DefaultPage<>(getConvertedContent(converter), this.totalElements, this.totalPages);
     }
 
     private <U> List<U> getConvertedContent(Function<? super T, ? extends U> converter) {
@@ -37,8 +35,7 @@ public class DefaultPage<T> {
         return new DefaultPage<>(
             page.getContent(),
             page.getTotalElements(),
-            page.getTotalPages(),
-            page.getPageable().getPageNumber()
+            page.getTotalPages()
         );
     }
 }

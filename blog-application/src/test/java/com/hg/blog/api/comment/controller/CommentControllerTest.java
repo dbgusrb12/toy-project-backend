@@ -279,7 +279,7 @@ class CommentControllerTest {
             GetComment.of(1, 1, null, "content", "nickname", LocalDateTime.now(), LocalDateTime.now())
         );
         given(commentService.getComments(CommentType.ROOT, postId, page, size))
-            .willReturn(new DefaultPage<>(getComments, 3, 1, 0));
+            .willReturn(new DefaultPage<>(getComments, 3, 1));
 
         // when, then
         mockMvc.perform(get(API_PREFIX + COMMENT_API)
@@ -305,7 +305,7 @@ class CommentControllerTest {
             GetComment.of(1, 1, null, "content", "nickname", LocalDateTime.now(), LocalDateTime.now())
         );
         given(commentService.getComments(CommentType.CHILD, commentId, page, size))
-            .willReturn(new DefaultPage<>(getComments, 3, 1, 0));
+            .willReturn(new DefaultPage<>(getComments, 3, 1));
 
         // when, then
         mockMvc.perform(get(API_PREFIX + COMMENT_API + "/{commentId}" + COMMENT_API, commentId)
