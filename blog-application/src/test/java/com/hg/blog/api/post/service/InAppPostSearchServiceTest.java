@@ -34,11 +34,13 @@ class InAppPostSearchServiceTest {
         int size = 5;
         Account account = createAccount();
         List<Post> content = createPosts(account);
-
         given(postQueryService.getPosts(search, page, size))
             .willReturn(new DefaultPage<>(content, 3, 1));
 
+        // when
         DefaultPage<GetPostList> posts = inAppPostSearchService.getPosts(search, page, size);
+
+        // then
         assertThat(posts.getTotalElements()).isEqualTo(3);
         assertThat(posts.getTotalPages()).isEqualTo(1);
         assertThat(posts.getContent().size()).isEqualTo(3);

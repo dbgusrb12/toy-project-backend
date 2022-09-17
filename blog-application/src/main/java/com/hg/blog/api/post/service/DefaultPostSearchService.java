@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 public class DefaultPostSearchService implements PostSearchService {
 
     private final InAppPostSearchService inAppPostSearchService;
+    private final NaverPostSearchService naverPostSearchService;
     private final KeywordCommandService keywordCommandService;
 
     @Override
@@ -25,7 +26,7 @@ public class DefaultPostSearchService implements PostSearchService {
             case IN_APP:
                 return this.getPosts(search, page, size);
             case NAVER:
-                return null;
+                return naverPostSearchService.getPosts(search, page, size);
             case KAKAO:
                 return new DefaultPage<>(new ArrayList<>(), 0, 0);
             default:
