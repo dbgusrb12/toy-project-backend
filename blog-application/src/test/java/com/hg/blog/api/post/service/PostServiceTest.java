@@ -4,17 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import com.hg.blog.api.post.dto.BlogType;
 import com.hg.blog.api.post.dto.PostDto.GetPost;
 import com.hg.blog.api.post.dto.PostDto.PostCreateCommand;
 import com.hg.blog.api.post.dto.PostDto.PostUpdateCommand;
 import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountQueryService;
-import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.domain.post.entity.Post;
 import com.hg.blog.domain.post.service.PostCommandService;
 import com.hg.blog.domain.post.service.PostQueryService;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -102,24 +99,6 @@ public class PostServiceTest {
         assertThat(getPost.getNickname()).isEqualTo(account.getNickname());
     }
 
-//    @Test
-//    public void getPostsTest() {
-//        // given
-//        String search = "";
-//        int page = 0;
-//        int size = 5;
-//        Account account = createAccount();
-//        List<Post> content = createPosts(account);
-//
-//        given(postQueryService.getPosts(search, page, size))
-//            .willReturn(new DefaultPage<>(content, 3, 1));
-//
-//        DefaultPage<GetPost> posts = postService.getPosts(BlogType.IN_APP, search, page, size);
-//        assertThat(posts.getTotalElements()).isEqualTo(3);
-//        assertThat(posts.getTotalPages()).isEqualTo(1);
-//        assertThat(posts.getContent().size()).isEqualTo(3);
-//    }
-
     private PostCreateCommand createPostCreateCommand() {
         return new PostCreateCommand(title, content);
     }
@@ -136,11 +115,4 @@ public class PostServiceTest {
         return Post.of(account, title, content);
     }
 
-    private List<Post> createPosts(Account account) {
-        return List.of(
-            createPost(account),
-            createPost(account),
-            createPost(account)
-        );
-    }
 }
