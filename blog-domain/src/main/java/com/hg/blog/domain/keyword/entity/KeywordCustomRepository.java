@@ -19,7 +19,7 @@ public class KeywordCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<KeywordGrouping> sample() {
+    public List<KeywordGrouping> getKeywordGroupingListTop10() {
         JPAQuery<KeywordGrouping> query = jpaQueryFactory
             .from(keyword)
             .select(
@@ -30,7 +30,7 @@ public class KeywordCustomRepository {
                 )
             )
             .groupBy(keyword.content)
-            .orderBy(new OrderSpecifier(Order.DESC, keyword.content.count()))
+            .orderBy(new OrderSpecifier<>(Order.DESC, keyword.content.count()))
             .limit(10);
 
         return query.fetch();

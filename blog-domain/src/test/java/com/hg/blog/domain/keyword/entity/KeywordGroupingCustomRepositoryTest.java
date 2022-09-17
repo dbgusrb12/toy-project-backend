@@ -1,5 +1,7 @@
 package com.hg.blog.domain.keyword.entity;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.hg.blog.domain.config.QueryDslConfig;
 import com.hg.blog.domain.keyword.projection.KeywordGrouping;
 import java.util.ArrayList;
@@ -22,17 +24,23 @@ class KeywordGroupingCustomRepositoryTest {
     private KeywordRepository keywordRepository;
 
     @Test
-    public void sample() {
+    public void getKeywordGroupingListTop10Test() {
+        // given
+        saveKeywordList();
+
+        // when
+        List<KeywordGrouping> keywordList = keywordCustomRepository.getKeywordGroupingListTop10();
+
+        // then
+        assertThat(keywordList).isNotNull();
+        assertThat(keywordList.size()).isEqualTo(2);
+    }
+
+    private void saveKeywordList() {
         List<Keyword> keywords = new ArrayList<>();
         for (int i = 1; i < 10; i++) {
             keywords.add(Keyword.of("content" + i % 2));
         }
         keywordRepository.saveAll(keywords);
-        List<KeywordGrouping> sample = keywordCustomRepository.sample();
-
-        sample.forEach(item -> {
-            System.out.println(item.getContent());
-            System.out.println(item.getCount());
-        });
     }
 }
