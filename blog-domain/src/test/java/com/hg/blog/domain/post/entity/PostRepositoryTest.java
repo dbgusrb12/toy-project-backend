@@ -66,7 +66,24 @@ public class PostRepositoryTest {
         savePost(account);
 
         // when
-        Page<Post> posts = postRepository.findByContentContainsAndDeleted("", false, PageRequest.of(0, 5));
+        Page<Post> posts = postRepository.findByContentContainsAndDeleted("content", false, PageRequest.of(0, 5));
+
+        // then
+        assertThat(posts.getTotalElements()).isEqualTo(3);
+        assertThat(posts.getContent().size()).isEqualTo(3);
+        assertThat(posts.getTotalPages()).isEqualTo(1);
+    }
+
+    @Test
+    void findByList() {
+        // given
+        Account account = saveAccount();
+        savePost(account);
+        savePost(account);
+        savePost(account);
+
+        // when
+        Page<Post> posts = postRepository.findByDeleted(false, PageRequest.of(0, 5));
 
         // then
         assertThat(posts.getTotalElements()).isEqualTo(3);
