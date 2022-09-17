@@ -15,7 +15,7 @@ public class KeywordService {
     private final KeywordQueryService keywordQueryService;
 
     @Transactional
-    public List<GetKeywordList> getKeywordList() {
+    public List<GetKeywordList> getKeywords() {
         return keywordQueryService.getKeywordTop10().stream()
             .map(keywordGrouping -> new GetKeywordList(
                 keywordGrouping.getCount(),

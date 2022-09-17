@@ -24,14 +24,14 @@ class KeywordServiceTest {
     KeywordService keywordService;
 
     @Test
-    void getKeywordListTest() {
+    void getKeywordsTest() {
         // given
         List<KeywordGrouping> keywords = getKeywordList();
         given(keywordQueryService.getKeywordTop10())
             .willReturn(keywords);
 
         // when
-        List<GetKeywordList> keywordList = keywordService.getKeywordList();
+        List<GetKeywordList> keywordList = keywordService.getKeywords();
 
         // then
         assertThat(keywordList).isNotNull();
