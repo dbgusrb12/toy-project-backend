@@ -74,7 +74,6 @@ public class PostQueryServiceTest {
         // then
         assertThat(posts.getTotalElements()).isEqualTo(1);
         assertThat(posts.getTotalPages()).isEqualTo(1);
-        assertThat(posts.getCurrentPage()).isEqualTo(0);
         assertThat(posts.getContent().size()).isEqualTo(1);
     }
 

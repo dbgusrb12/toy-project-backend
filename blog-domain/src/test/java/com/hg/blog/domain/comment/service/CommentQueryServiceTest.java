@@ -82,7 +82,6 @@ class CommentQueryServiceTest {
 
         assertThat(comments.getTotalElements()).isEqualTo(1);
         assertThat(comments.getTotalPages()).isEqualTo(1);
-        assertThat(comments.getCurrentPage()).isEqualTo(0);
         assertThat(comments.getContent().size()).isEqualTo(1);
     }
 
@@ -92,7 +91,6 @@ class CommentQueryServiceTest {
 
         assertThat(comments.getTotalElements()).isEqualTo(1);
         assertThat(comments.getTotalPages()).isEqualTo(1);
-        assertThat(comments.getCurrentPage()).isEqualTo(0);
         assertThat(comments.getContent().size()).isEqualTo(1);
     }
 
