@@ -1,5 +1,24 @@
 spring:
+  application:
+    name: toy-project-backend
+    desc: 'toy project backend 서비스'
   profiles:
     include:
       - blog-domain
       - naver-client
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+    resolve-schema-properties: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /swagger-ui.html
+    url: ${SERVICE_PATH:}/v3/api-docs # swagger api doc url
+    config-url: ${SERVICE_PATH:}/v3/api-docs/swagger-config # swagger config url
+    disable-swagger-default-url: true
+    show-common-extensions: true

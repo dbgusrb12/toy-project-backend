@@ -11,6 +11,7 @@ import static org.springframework.http.HttpMethod.PUT;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -24,7 +25,16 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new Interceptor())
-            .addPathPatterns("/**");
+            .addPathPatterns("/**")
+            .excludePathPatterns(
+                "/static/**",
+                "/swagger*/**",
+                "/webjars/**",
+                "/v3/api-docs*/**",
+                "/configuration*/**",
+                "/_test/**",
+                "/error"
+            );
     }
 
     /**
@@ -40,6 +50,12 @@ public class WebConfig implements WebMvcConfigurer {
             .allowedHeaders("*")
             .exposedHeaders(ACCESS_CONTROL_ALLOW_ORIGIN, ACCESS_CONTROL_ALLOW_CREDENTIALS)
             .allowCredentials(true).maxAge(10);
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/swagger*/**").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }
 
