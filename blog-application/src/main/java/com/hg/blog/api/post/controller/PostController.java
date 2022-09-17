@@ -12,7 +12,9 @@ import com.hg.blog.api.post.service.PostSearchService;
 import com.hg.blog.api.post.service.PostService;
 import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.response.Response;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(API_PREFIX + POST_API)
+@Tag(name = "post")
 public class PostController {
 
     private final PostService postService;
@@ -36,6 +39,7 @@ public class PostController {
 
     @PostMapping("")
     @Permit(Role.USER)
+    @Operation(description = "게시글 생성")
     public Response<Void> savePost(
         @RequestAttribute String userId,
         @Valid @RequestBody PostDto.PostCreateCommand command
@@ -46,6 +50,7 @@ public class PostController {
 
     @PutMapping("/{postId}")
     @Permit(Role.USER)
+    @Operation(description = "게시글 수정")
     public Response<Void> updatePost(
         @Parameter(description = "수정 할 post id") @PathVariable long postId,
         @RequestAttribute String userId,
@@ -57,6 +62,7 @@ public class PostController {
 
     @DeleteMapping("/{postId}")
     @Permit(Role.USER)
+    @Operation(description = "게시글 삭제")
     public Response<Void> deletePost(
         @Parameter(description = "삭제 할 post id") @PathVariable long postId,
         @RequestAttribute String userId
@@ -66,11 +72,13 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
+    @Operation(description = "게시글 상세 조회")
     public Response<PostDto.GetPost> getPost(@Parameter(description = "조회 할 post id") @PathVariable long postId) {
         return Response.of(postService.getPost(postId));
     }
 
     @GetMapping("")
+    @Operation(description = "게시글 리스트 조회")
     public Response<DefaultPage<GetPostList>> getPosts(
         @Parameter(description = "검색 할 blog 타입") @RequestParam BlogType blogType,
         @Parameter(description = "검색 할 내용") @RequestParam(required = false) String search,

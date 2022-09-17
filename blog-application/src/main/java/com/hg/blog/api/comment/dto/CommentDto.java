@@ -1,5 +1,6 @@
 package com.hg.blog.api.comment.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,9 +15,11 @@ public class CommentDto {
     public static class CommentCreateCommand {
 
         @NotNull(message = "필수 값입니다.")
+        @Schema(description = "댓글 생성 할 post id")
         private Long postId;
 
         @NotBlank(message = "필수 값입니다.")
+        @Schema(description = "댓글 내용")
         private String content;
     }
 
@@ -26,6 +29,7 @@ public class CommentDto {
     public static class ChildCommentCreateCommand {
 
         @NotBlank(message = "필수 값입니다.")
+        @Schema(description = "댓글 내용")
         private String content;
     }
 
@@ -35,6 +39,7 @@ public class CommentDto {
     public static class CommentUpdateCommand {
 
         @NotBlank(message = "필수 값입니다.")
+        @Schema(description = "수정 할 댓글 내용")
         private String content;
     }
 
