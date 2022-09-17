@@ -8,7 +8,7 @@ public interface PostSearchService {
 
     default DefaultPage<GetPostList> getPosts(BlogType blogType, String search, int page, int size) {
         throw new UnsupportedOperationException();
-    };
+    }
 
     DefaultPage<GetPostList> getPosts(String search, int page, int size);
 }
