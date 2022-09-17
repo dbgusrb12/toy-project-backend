@@ -1,6 +1,8 @@
 package com.hg.blog.domain.keyword.service;
 
-import com.hg.blog.domain.keyword.entity.KeywordRepository;
+import com.hg.blog.domain.keyword.entity.KeywordCustomRepository;
+import com.hg.blog.domain.keyword.projection.KeywordGrouping;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +10,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KeywordQueryService {
 
-    private final KeywordRepository keywordRepository;
+    private final KeywordCustomRepository keywordCustomRepository;
 
+    public List<KeywordGrouping> getKeywordTop10() {
+        return keywordCustomRepository.getKeywordGroupingListTop10();
+    }
 }
