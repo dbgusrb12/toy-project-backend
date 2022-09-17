@@ -12,6 +12,7 @@ import com.hg.blog.api.post.service.PostSearchService;
 import com.hg.blog.api.post.service.PostService;
 import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.response.Response;
+import io.swagger.v3.oas.annotations.Parameter;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -46,7 +47,7 @@ public class PostController {
     @PutMapping("/{postId}")
     @Permit(Role.USER)
     public Response<Void> updatePost(
-        @PathVariable long postId,
+        @Parameter(description = "수정 할 post id") @PathVariable long postId,
         @RequestAttribute String userId,
         @Valid @RequestBody PostDto.PostUpdateCommand command
     ) {
@@ -56,22 +57,25 @@ public class PostController {
 
     @DeleteMapping("/{postId}")
     @Permit(Role.USER)
-    public Response<Void> deletePost(@PathVariable long postId, @RequestAttribute String userId) {
+    public Response<Void> deletePost(
+        @Parameter(description = "삭제 할 post id") @PathVariable long postId,
+        @RequestAttribute String userId
+    ) {
         postService.deletePost(postId, userId);
         return Response.ok();
     }
 
     @GetMapping("/{postId}")
-    public Response<PostDto.GetPost> getPost(@PathVariable long postId) {
+    public Response<PostDto.GetPost> getPost(@Parameter(description = "조회 할 post id") @PathVariable long postId) {
         return Response.of(postService.getPost(postId));
     }
 
     @GetMapping("")
     public Response<DefaultPage<GetPostList>> getPosts(
-        @RequestParam BlogType blogType,
-        @RequestParam(required = false) String search,
-        @RequestParam int page,
-        @RequestParam int size
+        @Parameter(description = "검색 할 blog 타입") @RequestParam BlogType blogType,
+        @Parameter(description = "검색 할 내용") @RequestParam(required = false) String search,
+        @Parameter(description = "page no") @RequestParam int page,
+        @Parameter(description = "page size") @RequestParam int size
     ) {
         return Response.of(postSearchService.getPosts(blogType, search, page, size));
     }
