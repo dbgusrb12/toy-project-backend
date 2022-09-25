@@ -11,12 +11,6 @@ public class AccountQueryService {
 
     private final AccountRepository accountRepository;
 
-
-    public Account signIn(String userId, String password) {
-        return accountRepository.findByUserIdAndPassword(userId, password)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-    }
-
     public Account getAccountByUserId(String userId) {
         return accountRepository.findByUserId(userId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));

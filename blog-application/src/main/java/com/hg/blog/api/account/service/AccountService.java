@@ -8,8 +8,8 @@ import com.hg.blog.domain.account.service.AccountCommandService;
 import com.hg.blog.domain.account.service.AccountQueryService;
 import com.hg.blog.util.JWTProvider;
 import com.hg.blog.util.RSAUtil;
-import com.hg.blog.util.SHA256Util;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,21 +19,20 @@ public class AccountService {
 
     private final AccountCommandService accountCommandService;
     private final AccountQueryService accountQueryService;
+    private final PasswordEncoder bcryptPasswordEncoder;
 
     @Transactional
     public void signUp(SignUpCommand request) {
         accountCommandService.saveAccount(
             request.getUserId(),
-            passwordEncrypt(request.getPassword()),
+            bcryptPasswordEncoder.encode(request.getPassword()),
             request.getNickname()
         );
     }
 
     public String signIn(SignInCommand request) {
-        final Account account = accountQueryService.signIn(
-            request.getUserId(),
-            passwordEncrypt(request.getPassword())
-        );
+        final Account account = accountQueryService.getAccountByUserId(request.getUserId());
+        checkPasswordMatches(request.getPassword(), account.getPassword());
         return JWTProvider.generateToken(account);
     }
 
@@ -42,7 +41,9 @@ public class AccountService {
         return rsaUtil.writePublicKeyToString();
     }
 
-    private String passwordEncrypt(String password) {
-        return SHA256Util.getEncrypt(password);
+    private void checkPasswordMatches(String password, String encodePassword) {
+        if (!bcryptPasswordEncoder.matches(password, encodePassword)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
     }
 }

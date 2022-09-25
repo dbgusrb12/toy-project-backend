@@ -10,12 +10,12 @@ import com.hg.blog.domain.account.entity.Account;
 import com.hg.blog.domain.account.service.AccountCommandService;
 import com.hg.blog.domain.account.service.AccountQueryService;
 import com.hg.blog.util.JWTProvider;
-import com.hg.blog.util.SHA256Util;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 public class AccountServiceTest {
@@ -23,6 +23,8 @@ public class AccountServiceTest {
     @Mock
     private AccountCommandService accountCommandService;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
     @Mock
     private AccountQueryService accountQueryService;
 
@@ -33,14 +35,13 @@ public class AccountServiceTest {
     public void signUpTest() {
         // given
         SignUpCommand request = createSignUpCommand();
-
         // when
         accountService.signUp(request);
 
         // then
         verify(accountCommandService).saveAccount(
             request.getUserId(),
-            SHA256Util.getEncrypt(request.getPassword()),
+            passwordEncoder.encode(request.getPassword()),
             request.getNickname()
         );
     }
@@ -50,9 +51,10 @@ public class AccountServiceTest {
         // given
         SignInCommand request = createSignInCommand();
         Account account = createAccount();
-        String encryptPassword = SHA256Util.getEncrypt(request.getPassword());
-        given(accountQueryService.signIn(request.getUserId(), encryptPassword))
+        given(accountQueryService.getAccountByUserId(request.getUserId()))
             .willReturn(account);
+        given(passwordEncoder.matches(request.getPassword(), account.getPassword()))
+            .willReturn(true);
 
         // when
         String token = accountService.signIn(request);
