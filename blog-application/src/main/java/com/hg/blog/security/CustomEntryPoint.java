@@ -11,7 +11,6 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 public class CustomEntryPoint implements AuthenticationEntryPoint {
 
     private final HandlerExceptionResolver resolver;
-
     public CustomEntryPoint(HandlerExceptionResolver resolver) {
         this.resolver = resolver;
     }
