@@ -46,7 +46,7 @@ public class PostController {
         @Valid @RequestBody PostDto.PostCreateCommand command
     ) {
         postService.savePost(user.getUsername(), command);
-        return Response.ok();
+        return Response.OK;
     }
 
     @PutMapping("/{postId}")
@@ -58,7 +58,7 @@ public class PostController {
         @Valid @RequestBody PostDto.PostUpdateCommand command
     ) {
         postService.updatePost(postId, user.getUsername(), command);
-        return Response.ok();
+        return Response.OK;
     }
 
     @DeleteMapping("/{postId}")
@@ -69,7 +69,7 @@ public class PostController {
         @Parameter(hidden = true) @AuthenticationPrincipal User user
     ) {
         postService.deletePost(postId, user.getUsername());
-        return Response.ok();
+        return Response.OK;
     }
 
     @GetMapping("/{postId}")

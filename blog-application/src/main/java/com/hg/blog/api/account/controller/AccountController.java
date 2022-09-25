@@ -29,7 +29,7 @@ public class AccountController {
     @Operation(description = "회원 가입")
     public Response<Void> signUp(@Valid @RequestBody SignUpCommand request) {
         accountService.signUp(request);
-        return Response.ok();
+        return Response.OK;
     }
 
     @PostMapping("/sign-in")

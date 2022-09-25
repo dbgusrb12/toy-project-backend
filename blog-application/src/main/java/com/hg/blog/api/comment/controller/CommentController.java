@@ -44,7 +44,7 @@ public class CommentController {
         @Valid @RequestBody CommentDto.CommentCreateCommand command
     ) {
         commentService.saveComment(user.getUsername(), command);
-        return Response.ok();
+        return Response.OK;
     }
 
     @PutMapping("/{commentId}")
@@ -56,7 +56,7 @@ public class CommentController {
         @Valid @RequestBody CommentDto.CommentUpdateCommand command
     ) {
         commentService.updateComment(commentId, user.getUsername(), command);
-        return Response.ok();
+        return Response.OK;
     }
 
     @DeleteMapping("/{commentId}")
@@ -67,7 +67,7 @@ public class CommentController {
         @Parameter(hidden = true) @AuthenticationPrincipal User user
     ) {
         commentService.deleteComment(commentId, user.getUsername());
-        return Response.ok();
+        return Response.OK;
     }
 
     @GetMapping("/{commentId}")
@@ -87,7 +87,7 @@ public class CommentController {
         @Valid @RequestBody CommentDto.ChildCommentCreateCommand command
     ) {
         commentService.saveChildComment(commentId, user.getUsername(), command);
-        return Response.ok();
+        return Response.OK;
     }
 
     @GetMapping("")

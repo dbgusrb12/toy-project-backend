@@ -9,6 +9,8 @@ public class Response<T> {
     private String message;
     private T body;
 
+    public static final Response<Void> OK = new Response<>();
+
     private Response() {
         this.code = ResponseCode.OK;
         this.message = code.getMessage();
@@ -17,10 +19,6 @@ public class Response<T> {
     private Response(T body) {
         this();
         this.body = body;
-    }
-
-    public static Response<Void> ok() {
-        return new Response<>();
     }
 
     public static <T> Response<T> of(T body) {
