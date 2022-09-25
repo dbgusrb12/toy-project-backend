@@ -11,17 +11,18 @@ import com.hg.blog.api.comment.dto.CommentType;
 import com.hg.blog.api.comment.service.CommentService;
 import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.response.Response;
+import com.hg.blog.security.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,10 +40,10 @@ public class CommentController {
     @Permit(Role.USER)
     @Operation(description = "댓글 생성")
     public Response<Void> saveComment(
-        @RequestAttribute String userId,
+        @Parameter(hidden = true) @AuthenticationPrincipal User user,
         @Valid @RequestBody CommentDto.CommentCreateCommand command
     ) {
-        commentService.saveComment(userId, command);
+        commentService.saveComment(user.getUsername(), command);
         return Response.ok();
     }
 
@@ -51,10 +52,10 @@ public class CommentController {
     @Operation(description = "댓글 수정")
     public Response<Void> updateComment(
         @Parameter(description = "수정 할 comment id") @PathVariable long commentId,
-        @RequestAttribute String userId,
+        @Parameter(hidden = true) @AuthenticationPrincipal User user,
         @Valid @RequestBody CommentDto.CommentUpdateCommand command
     ) {
-        commentService.updateComment(commentId, userId, command);
+        commentService.updateComment(commentId, user.getUsername(), command);
         return Response.ok();
     }
 
@@ -63,9 +64,9 @@ public class CommentController {
     @Operation(description = "댓글 삭제")
     public Response<Void> deleteComment(
         @Parameter(description = "삭제 할 comment id") @PathVariable long commentId,
-        @RequestAttribute String userId
+        @Parameter(hidden = true) @AuthenticationPrincipal User user
     ) {
-        commentService.deleteComment(commentId, userId);
+        commentService.deleteComment(commentId, user.getUsername());
         return Response.ok();
     }
 
@@ -82,10 +83,10 @@ public class CommentController {
     @Operation(description = "하위 댓글 생성")
     public Response<Void> saveChildComment(
         @Parameter(description = "하위 댓글 생성 할 comment id") @PathVariable long commentId,
-        @RequestAttribute String userId,
+        @Parameter(hidden = true) @AuthenticationPrincipal User user,
         @Valid @RequestBody CommentDto.ChildCommentCreateCommand command
     ) {
-        commentService.saveChildComment(commentId, userId, command);
+        commentService.saveChildComment(commentId, user.getUsername(), command);
         return Response.ok();
     }
 

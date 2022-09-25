@@ -12,17 +12,18 @@ import com.hg.blog.api.post.service.PostSearchService;
 import com.hg.blog.api.post.service.PostService;
 import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.response.Response;
+import com.hg.blog.security.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,10 +42,10 @@ public class PostController {
     @Permit(Role.USER)
     @Operation(description = "게시글 생성")
     public Response<Void> savePost(
-        @RequestAttribute String userId,
+        @Parameter(hidden = true) @AuthenticationPrincipal User user,
         @Valid @RequestBody PostDto.PostCreateCommand command
     ) {
-        postService.savePost(userId, command);
+        postService.savePost(user.getUsername(), command);
         return Response.ok();
     }
 
@@ -53,10 +54,10 @@ public class PostController {
     @Operation(description = "게시글 수정")
     public Response<Void> updatePost(
         @Parameter(description = "수정 할 post id") @PathVariable long postId,
-        @RequestAttribute String userId,
+        @Parameter(hidden = true) @AuthenticationPrincipal User user,
         @Valid @RequestBody PostDto.PostUpdateCommand command
     ) {
-        postService.updatePost(postId, userId, command);
+        postService.updatePost(postId, user.getUsername(), command);
         return Response.ok();
     }
 
@@ -65,9 +66,9 @@ public class PostController {
     @Operation(description = "게시글 삭제")
     public Response<Void> deletePost(
         @Parameter(description = "삭제 할 post id") @PathVariable long postId,
-        @RequestAttribute String userId
+        @Parameter(hidden = true) @AuthenticationPrincipal User user
     ) {
-        postService.deletePost(postId, userId);
+        postService.deletePost(postId, user.getUsername());
         return Response.ok();
     }
 
