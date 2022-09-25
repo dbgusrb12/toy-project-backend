@@ -1,5 +1,6 @@
 package com.hg.blog.util;
 
+import static com.hg.blog.constants.Constants.TOKEN_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.hg.blog.domain.account.entity.Account;
@@ -18,7 +19,7 @@ public class JWTProviderTest {
     public void getUserIdFromJWTTest() {
         Account account = createAccount();
         String token = JWTProvider.generateToken(account);
-        String userId = JWTProvider.getUserIdFromJWT(token);
+        String userId = JWTProvider.getUserIdFromJWT(token.replaceFirst(TOKEN_TYPE + " ", ""));
         assertThat(userId).isEqualTo(account.getUserId());
     }
 
