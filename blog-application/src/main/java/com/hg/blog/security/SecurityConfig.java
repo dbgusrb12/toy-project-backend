@@ -24,8 +24,7 @@ public class SecurityConfig {
     private final UserService userService;
     private static final String ACCOUNT_WILDCARD_API = Constants.API_PREFIX + Constants.ACCOUNT_API + "/**";
 
-    public SecurityConfig(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver,
-        UserService userService) {
+    public SecurityConfig(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver, UserService userService) {
         this.resolver = resolver;
         this.userService = userService;
     }

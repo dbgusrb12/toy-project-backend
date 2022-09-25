@@ -33,11 +33,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(PostController.class)
+@WebMvcTest(controllers = PostController.class, excludeAutoConfiguration = {SecurityAutoConfiguration.class})
 public class PostControllerTest {
 
     @Autowired
@@ -73,19 +74,6 @@ public class PostControllerTest {
     }
 
     @Test
-    public void savePostAuthErrorTest() throws Exception {
-        // given
-        PostCreateCommand request = new PostCreateCommand("post1", "content");
-
-        // when, then
-        mockMvc.perform(post(API_PREFIX + POST_API)
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE)
-                .content(getBody(request)))
-            .andExpect(status().is4xxClientError());
-    }
-
-    @Test
     public void savePostNotExistTitleErrorTest() throws Exception {
         // given
         PostCreateCommand request = new PostCreateCommand(null, "content");
@@ -116,20 +104,6 @@ public class PostControllerTest {
                 .header(AUTHORIZATION, TOKEN_TYPE + " " + token)
                 .content(getBody(request)))
             .andExpect(status().isOk());
-    }
-
-    @Test
-    public void updatePostNotAuthErrorTest() throws Exception {
-        // given
-        PostUpdateCommand request = new PostUpdateCommand("title", "content");
-        long postId = 1;
-
-        // when, then
-        mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE)
-                .content(getBody(request)))
-            .andExpect(status().is4xxClientError());
     }
 
     @Test

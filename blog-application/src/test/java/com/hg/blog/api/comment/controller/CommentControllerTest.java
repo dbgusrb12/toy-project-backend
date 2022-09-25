@@ -31,11 +31,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(CommentController.class)
+@WebMvcTest(controllers = CommentController.class, excludeAutoConfiguration = {SecurityAutoConfiguration.class})
 class CommentControllerTest {
 
     @Autowired
@@ -65,20 +66,6 @@ class CommentControllerTest {
                 .header(AUTHORIZATION, TOKEN_TYPE + " " + token)
                 .content(getBody(request)))
             .andExpect(status().isOk())
-            .andDo(print());
-    }
-
-    @Test
-    public void saveCommentTest_토큰_없을_경우_에러() throws Exception {
-        // given
-        CommentCreateCommand request = new CommentCreateCommand(1L, "content");
-
-        // when, then
-        mockMvc.perform(post(API_PREFIX + COMMENT_API)
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE)
-                .content(getBody(request)))
-            .andExpect(status().is4xxClientError())
             .andDo(print());
     }
 
@@ -135,21 +122,6 @@ class CommentControllerTest {
     }
 
     @Test
-    public void updateCommentTest_토큰_없을_경우_에러() throws Exception {
-        // given
-        long commentId = 1;
-        CommentUpdateCommand request = new CommentUpdateCommand("update content");
-
-        // when, then
-        mockMvc.perform(put(API_PREFIX + COMMENT_API + "/{commentId}", commentId)
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE)
-                .content(getBody(request)))
-            .andExpect(status().is4xxClientError())
-            .andDo(print());
-    }
-
-    @Test
     public void updateCommentTest_content_없을_경우_에러() throws Exception {
         // given
         long commentId = 1;
@@ -180,19 +152,6 @@ class CommentControllerTest {
                 .accept(APPLICATION_JSON_VALUE)
                 .header(AUTHORIZATION, TOKEN_TYPE + " " + token))
             .andExpect(status().isOk())
-            .andDo(print());
-    }
-
-    @Test
-    public void deleteCommentTest_토큰_없을_경우_에러() throws Exception {
-        // given
-        long commentId = 1;
-
-        // when, then
-        mockMvc.perform(delete(API_PREFIX + COMMENT_API + "/{commentId}", commentId)
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE))
-            .andExpect(status().is4xxClientError())
             .andDo(print());
     }
 
@@ -231,21 +190,6 @@ class CommentControllerTest {
                 .header(AUTHORIZATION, TOKEN_TYPE + " " + token)
                 .content(getBody(request)))
             .andExpect(status().isOk())
-            .andDo(print());
-    }
-
-    @Test
-    public void saveChileCommentTest_토큰_없을_경우_에러() throws Exception {
-        // given
-        long commentId = 1;
-        ChildCommentCreateCommand request = new ChildCommentCreateCommand("content");
-
-        // when, then
-        mockMvc.perform(post(API_PREFIX + COMMENT_API + "/{commentId}", commentId)
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE)
-                .content(getBody(request)))
-            .andExpect(status().is4xxClientError())
             .andDo(print());
     }
 
