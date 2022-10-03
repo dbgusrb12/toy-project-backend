@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +25,8 @@ public class SecurityConfig {
     private final UserService userService;
     private static final String ACCOUNT_WILDCARD_API = Constants.API_PREFIX + Constants.ACCOUNT_API + "/**";
 
-    public SecurityConfig(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver, UserService userService) {
+    public SecurityConfig(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver,
+        UserService userService) {
         this.resolver = resolver;
         this.userService = userService;
     }
@@ -61,17 +63,23 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // cors 활성화
-        http.cors();
-        // csrf(html tag를 통한 공격) disabled
+        // 동일한 origin 만 허용
+        http.headers(headerConfig ->
+            headerConfig.frameOptions(FrameOptionsConfig::sameOrigin));
+
+        // csrf(html tag 를 통한 공격) disabled
         http.csrf(AbstractHttpConfigurer::disable);
-        // http basic disabled (id, pwd 기반)
+
+        // http basic disabled (기본 설정은 enable => 미인증시 id, pwd 기반 로그인폼으로 리다이렉트 됨)
         http.httpBasic(AbstractHttpConfigurer::disable);
+
         // security 제공 logout 사용하지 않음
         http.logout(AbstractHttpConfigurer::disable);
-        // session 방식 사용하지 않음
+
+        // JWT 방식을 사용하기 때문에 session 방식 사용하지 않음
         http.sessionManagement(sessionManagement ->
             sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         // url 권한 설정
         http.authorizeRequests(authorizeRequests ->
             authorizeRequests
@@ -79,6 +87,7 @@ public class SecurityConfig {
                 .anyRequest().hasRole("USER")
         );
 
+        // security error handle
         http.exceptionHandling(exceptionHandling ->
             exceptionHandling
                 .authenticationEntryPoint(new CustomEntryPoint(resolver)) // 인증이 안된 사용자가 특정 권한이 필요한 handler 에 접근했을 때
