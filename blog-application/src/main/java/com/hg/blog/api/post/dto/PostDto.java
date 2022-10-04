@@ -12,7 +12,7 @@ public class PostDto {
     @AllArgsConstructor
     public static class PostCreateCommand {
 
-        @NotBlank(message = "필수 값입니다.")
+        @NotBlank(message = "필수 값입니다")
         @Schema(description = "게시글 제목")
         private String title;
         @Schema(description = "게시글 내용")
@@ -24,10 +24,10 @@ public class PostDto {
     @AllArgsConstructor
     public static class PostUpdateCommand {
 
-        @NotBlank(message = "필수 값입니다.")
+        @NotBlank(message = "필수 값입니다")
         @Schema(description = "게시글 제목")
         private String title;
-        @NotBlank(message = "필수 값입니다.")
+        @NotBlank(message = "필수 값입니다")
         @Schema(description = "게시글 내용")
         private String content;
     }

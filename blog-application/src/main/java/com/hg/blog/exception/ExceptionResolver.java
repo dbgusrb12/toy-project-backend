@@ -2,6 +2,8 @@ package com.hg.blog.exception;
 
 import java.security.AccessControlException;
 import java.util.stream.Collectors;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Path.Node;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -50,7 +52,7 @@ public class ExceptionResolver {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST, ex);
     }
 
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse methodArgumentNotValidException(MethodArgumentNotValidException ex) {
         print("Valid Error: ", ex);
@@ -64,6 +66,34 @@ public class ExceptionResolver {
             )
             .collect(Collectors.joining(", "));
         return ErrorResponse.of(HttpStatus.BAD_REQUEST, message);
+    }
+
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse constraintViolationException(ConstraintViolationException ex) {
+        print("Valid Error: ", ex);
+        String message = ex.getConstraintViolations().stream()
+            .map(constraintViolation -> {
+                String fieldName = null;
+                // property path 의 leaf node 가 field name
+                for (Node node : constraintViolation.getPropertyPath()) {
+                    fieldName = node.getName();
+                }
+                return String.format("[%s](은)는 %s. 입력된 값: [%s]",
+                    fieldName,
+                    constraintViolation.getMessage(),
+                    constraintViolation.getInvalidValue()
+                );
+            })
+            .collect(Collectors.joining(", "));
+        return ErrorResponse.of(HttpStatus.BAD_REQUEST, message);
+    }
+
+    @ExceptionHandler(value = Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handlerException(Exception ex) {
+        print("Internal Server Error: ", ex);
+        return ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     private void print(String format, Exception e) {

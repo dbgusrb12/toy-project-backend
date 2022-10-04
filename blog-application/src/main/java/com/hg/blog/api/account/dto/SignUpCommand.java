@@ -9,13 +9,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SignUpCommand {
 
-    @NotBlank(message = "필수 값입니다.")
+    @NotBlank(message = "필수 값입니다")
     @Schema(description = "유저 아이디")
     private String userId;
-    @NotBlank(message = "필수 값입니다.")
+    @NotBlank(message = "필수 값입니다")
     @Schema(description = "유저 비밀번호")
     private String password;
-    @NotBlank(message = "필수 값입니다.")
+    @NotBlank(message = "필수 값입니다")
     @Schema(description = "유저 닉네임")
     private String nickname;
 }

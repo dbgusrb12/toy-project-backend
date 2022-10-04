@@ -18,10 +18,10 @@ public class KakaoFeignClientAdapter {
     private final KakaoFeignClient kakaoFeignClient;
 
     public KakaoBlog getBlogList(
-        @NotBlank String query,
+        @NotBlank(message = "필수 값입니다") String query,
         @Min(1) @Max(50) Integer page,  // default 1
         @Min(1) @Max(50) Integer size,  // default 10
-        @NotNull KakaoSort sort
+        @NotNull(message = "필수 값입니다") KakaoSort sort
     ) {
         return kakaoFeignClient.getBlogList(query, page, size, sort.getSort());
     }

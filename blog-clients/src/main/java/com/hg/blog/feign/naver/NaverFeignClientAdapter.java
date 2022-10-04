@@ -18,10 +18,10 @@ public class NaverFeignClientAdapter {
     private final NaverFeignClient naverFeignClient;
 
     public NaverBlog getBlogList(
-        @NotBlank String query,
+        @NotBlank(message = "필수 값입니다") String query,
         @Min(1) @Max(1000) Integer start,
         @Min(1) @Max(100) Integer display,
-        @NotNull NaverSort sort
+        @NotNull(message = "필수 값입니다") NaverSort sort
     ) {
         return naverFeignClient.getBlogList(query, start, display, sort.getSort());
     }
