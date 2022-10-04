@@ -157,18 +157,6 @@ public class PostControllerTest {
     }
 
     @Test
-    public void deletePostNotAuthTest() throws Exception {
-        // given
-        long postId = 1;
-
-        // when, then
-        mockMvc.perform(put(API_PREFIX + POST_API + "/{postId}", postId)
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE))
-            .andExpect(status().is4xxClientError());
-    }
-
-    @Test
     public void getPostTest() throws Exception {
         // given
         long postId = 1;

@@ -30,7 +30,7 @@ class NaverFeignClientAdapterTest {
     void getBlogs_query_가_존재하지_않을_때_에러() {
         Executable execute = () -> naverFeignClientAdapter.getBlogList("", null, null, NaverSort.SIM);
         ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, execute);
-        assertThat(exception.getMessage()).isEqualTo("getBlogList.query: 공백일 수 없습니다");
+        assertThat(exception.getMessage()).isEqualTo("getBlogList.query: 필수 값입니다");
     }
 
     @Test
@@ -65,6 +65,6 @@ class NaverFeignClientAdapterTest {
     void getBlogs_sort_가_null_일때_에러() {
         Executable execute = () -> naverFeignClientAdapter.getBlogList("sample", null, null, null);
         ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, execute);
-        assertThat(exception.getMessage()).isEqualTo("getBlogList.sort: 널이어서는 안됩니다");
+        assertThat(exception.getMessage()).isEqualTo("getBlogList.sort: 필수 값입니다");
     }
 }
