@@ -7,5 +7,5 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation project(':blog-domain')
-    implementation project(':blog-clients:naver-client')
+    implementation project(':blog-clients')
 }

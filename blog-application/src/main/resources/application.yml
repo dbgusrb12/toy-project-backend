@@ -5,7 +5,7 @@ spring:
   profiles:
     include:
       - blog-domain
-      - naver-client
+      - blog-client
 
 springdoc:
   api-docs:

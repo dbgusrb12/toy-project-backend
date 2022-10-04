@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(properties = {"env=test", "feign.client.config.default.loggerLevel=FULL"})
-@ActiveProfiles({"naver-client", "local"})
+@ActiveProfiles({"blog-client", "local"})
 class NaverFeignClientAdapterTest {
 
     @Autowired
