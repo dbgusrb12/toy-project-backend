@@ -6,6 +6,11 @@ spring:
     include:
       - blog-domain
       - blog-client
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
 
 springdoc:
   api-docs:
