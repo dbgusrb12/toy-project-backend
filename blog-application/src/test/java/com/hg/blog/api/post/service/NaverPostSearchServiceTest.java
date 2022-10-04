@@ -22,13 +22,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class NaverPostSearchServiceTest {
 
     @Mock
-    private NaverFeignClientAdapter naverFeignClientAdapter;
+    NaverFeignClientAdapter naverFeignClientAdapter;
 
     @InjectMocks
-    private NaverPostSearchService naverPostSearchService;
+    NaverPostSearchService naverPostSearchService;
 
     @Test
-    public void getPostsTest() {
+    void getPostsTest() {
         // given
         String search = "search text";
         int page = 0;

@@ -4,7 +4,6 @@ import com.hg.blog.api.post.dto.BlogType;
 import com.hg.blog.api.post.dto.PostDto.GetPostList;
 import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.domain.keyword.service.KeywordCommandService;
-import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,7 @@ public class DefaultPostSearchService implements PostSearchService {
 
     private final InAppPostSearchService inAppPostSearchService;
     private final NaverPostSearchService naverPostSearchService;
+    private final KakaoPostSearchService kakaoPostSearchService;
     private final KeywordCommandService keywordCommandService;
 
     @Override
@@ -28,7 +28,7 @@ public class DefaultPostSearchService implements PostSearchService {
             case NAVER:
                 return naverPostSearchService.getPosts(search, page, size);
             case KAKAO:
-                return new DefaultPage<>(new ArrayList<>(), 0, 0);
+                return kakaoPostSearchService.getPosts(search, page, size);
             default:
                 throw new IllegalArgumentException("검색 불가능한 타입입니다.");
         }
