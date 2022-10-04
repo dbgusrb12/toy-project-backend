@@ -1,6 +1,6 @@
 package com.hg.blog.feign.naver;
 
-import com.hg.blog.feign.naver.dto.BlogResult;
+import com.hg.blog.feign.naver.dto.NaverBlog;
 import com.hg.blog.feign.naver.dto.NaverSort;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -17,7 +17,7 @@ public class NaverFeignClientAdapter {
 
     private final NaverFeignClient naverFeignClient;
 
-    public BlogResult getBlogList(
+    public NaverBlog getBlogList(
         @NotBlank String query,
         @Min(1) @Max(1000) Integer start,
         @Min(1) @Max(100) Integer display,

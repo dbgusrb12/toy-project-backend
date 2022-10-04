@@ -6,8 +6,8 @@ import static org.mockito.BDDMockito.given;
 import com.hg.blog.api.post.dto.PostDto.GetPostList;
 import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.feign.naver.NaverFeignClientAdapter;
-import com.hg.blog.feign.naver.dto.BlogResult;
-import com.hg.blog.feign.naver.dto.BlogResult.Item;
+import com.hg.blog.feign.naver.dto.NaverBlog;
+import com.hg.blog.feign.naver.dto.NaverBlog.Item;
 import com.hg.blog.feign.naver.dto.NaverSort;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,10 +33,10 @@ class NaverPostSearchServiceTest {
         String search = "search text";
         int page = 0;
         int size = 10;
-        BlogResult blogResult = getBlogResult();
+        NaverBlog naverBlog = getBlogResult();
         int start = 1;
         given(naverFeignClientAdapter.getBlogList(search, start, size, NaverSort.DATE))
-            .willReturn(blogResult);
+            .willReturn(naverBlog);
 
         // when
         DefaultPage<GetPostList> posts = naverPostSearchService.getPosts(search, page, size);
@@ -58,13 +58,13 @@ class NaverPostSearchServiceTest {
         );
     }
 
-    private BlogResult getBlogResult() {
+    private NaverBlog getBlogResult() {
         List<Item> items = List.of(
             getItem(),
             getItem(),
             getItem()
         );
-        return new BlogResult(LocalDateTime.now(), 3, 1, 3, items);
+        return new NaverBlog(LocalDateTime.now(), 3, 1, 3, items);
     }
 
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BlogResult {
+public class NaverBlog {
 
     @JsonFormat(pattern = "EEE, dd MMM yyyy HH:mm:ss Z", locale = "en")
     private LocalDateTime lastBuildDate;

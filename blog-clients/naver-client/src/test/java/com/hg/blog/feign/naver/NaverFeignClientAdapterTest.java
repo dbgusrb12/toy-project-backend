@@ -1,6 +1,6 @@
 package com.hg.blog.feign.naver;
 
-import com.hg.blog.feign.naver.dto.BlogResult;
+import com.hg.blog.feign.naver.dto.NaverBlog;
 import com.hg.blog.feign.naver.dto.NaverSort;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ class NaverFeignClientAdapterTest {
 
     @Test
     void getBlogsTest() {
-        BlogResult sample = naverFeignClientAdapter.getBlogList("sample", null, null, NaverSort.SIM);
+        NaverBlog sample = naverFeignClientAdapter.getBlogList("sample", null, null, NaverSort.SIM);
         System.out.println(sample);
     }
 }

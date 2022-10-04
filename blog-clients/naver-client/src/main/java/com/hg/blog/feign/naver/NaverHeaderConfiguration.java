@@ -8,8 +8,8 @@ public class NaverHeaderConfiguration {
 
     @Bean
     public RequestInterceptor requestInterceptor(
-        @Value("${client-id}") String clientId,
-        @Value("${client-secret}") String clientSecret
+        @Value("${naver.client-id}") String clientId,
+        @Value("${naver.client-secret}") String clientSecret
     ) {
         return requestTemplate -> requestTemplate
             .header("X-Naver-Client-Id", clientId)

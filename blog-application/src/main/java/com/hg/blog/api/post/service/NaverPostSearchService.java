@@ -4,8 +4,8 @@ import com.hg.blog.api.post.dto.BlogType;
 import com.hg.blog.api.post.dto.PostDto.GetPostList;
 import com.hg.blog.domain.dto.DefaultPage;
 import com.hg.blog.feign.naver.NaverFeignClientAdapter;
-import com.hg.blog.feign.naver.dto.BlogResult;
-import com.hg.blog.feign.naver.dto.BlogResult.Item;
+import com.hg.blog.feign.naver.dto.NaverBlog;
+import com.hg.blog.feign.naver.dto.NaverBlog.Item;
 import com.hg.blog.feign.naver.dto.NaverSort;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,12 +35,12 @@ public class NaverPostSearchService implements PostSearchService {
     }
 
     private DefaultPage<Item> getNaverBlogResult(String search, int page, int size) {
-        BlogResult blogList;
+        NaverBlog blogList;
         try {
             int start = page * size + 1;
             blogList = naverFeignClientAdapter.getBlogList(search, start, size, NaverSort.DATE);
         } catch (Exception e) {
-            blogList = new BlogResult(LocalDateTime.now(), 0, 1, 0, new ArrayList<>());
+            blogList = new NaverBlog(LocalDateTime.now(), 0, 1, 0, new ArrayList<>());
         }
         long totalPage = blogList.getTotal() % size == 0
             ? blogList.getTotal() / size
