@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
+import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,10 +48,17 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Resource 용 SecurityFilterChain 을 추가
+     *
+     * @param http: http security
+     * @return SecurityFilterChain
+     * @throws Exception
+     */
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web ->
-            web.ignoring()
+    @Order(0)
+    public SecurityFilterChain resources(HttpSecurity http) throws Exception {
+        return http.requestMatchers(matchers -> matchers
                 .antMatchers(
                     "/swagger*/**",
                     "/v3/api-docs*/**")
@@ -57,9 +66,14 @@ public class SecurityConfig {
                     PathRequest
                         .toStaticResources()
                         .atCommonLocations()
-                );
+                )
+            )
+            .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+            .requestCache(RequestCacheConfigurer::disable)
+            .securityContext(AbstractHttpConfigurer::disable)
+            .sessionManagement(AbstractHttpConfigurer::disable)
+            .build();
     }
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
